@@ -236,7 +236,7 @@
     logout() { tok.clear(); state.aiEnabled = false; refresh(); },
     refresh,
     clickupEnabled: () => state.clickupEnabled,
-    clickupSearch: (q, signal) => call("clickup?q=" + encodeURIComponent(q || ""), { signal }).then(r => r.tasks || []),
+    clickupSearch: (q, signal, f) => call("clickup?q=" + encodeURIComponent(q || "") + "&f=" + encodeURIComponent(f || "todas"), { signal }).then(r => { const l = r.tasks || []; l.counts = r.counts || null; return l; }),
     clickupTask: id => call("clickup?id=" + encodeURIComponent(id)).then(r => r.task),
   };
   if (tok.get()) refresh();

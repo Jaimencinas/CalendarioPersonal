@@ -79,9 +79,22 @@ export default handler(async (req) => {
   }
   const q = norm(u.searchParams.get("q") || "").trim();
   const words = q.split(/\s+/).filter(Boolean);
-  const list = (await allOpen())
-    .filter(t => !words.length || words.every(w => norm([t.title, t.list, t.folder, t.assignees.join(" "), t.description].join(" ")).includes(w)))
-    .sort((a, b) => b.updated - a.updated)
-    .slice(0, 40);
-  return json({ tasks: list });
+  // filtro de vencimiento: todas | novencidas | vencidas | sinfecha  (comparando con hoy en España)
+  const f = u.searchParams.get("f") || "todas";
+  const today = day(Date.now());
+  const byDue = t => f === "vencidas" ? (t.dateTo && t.dateTo < today)
+    : f === "novencidas" ? (t.dateTo && t.dateTo >= today)
+    : f === "sinfecha" ? !t.dateTo : true;
+  const all = (await allOpen()).filter(t => !words.length || words.every(w => norm([t.title, t.list, t.folder, t.assignees.join(" "), t.description].join(" ")).includes(w)));
+  const counts = {
+    todas: all.length,
+    novencidas: all.filter(t => t.dateTo && t.dateTo >= today).length,
+    vencidas: all.filter(t => t.dateTo && t.dateTo < today).length,
+    sinfecha: all.filter(t => !t.dateTo).length,
+  };
+  const list = all.filter(byDue)
+    .sort((a, b) => f === "vencidas" || f === "novencidas" ? String(a.dateTo).localeCompare(String(b.dateTo)) : b.updated - a.updated)
+    .slice(0, 60)
+    .map(t => ({ ...t, overdue: !!(t.dateTo && t.dateTo < today) }));
+  return json({ tasks: list, counts });
 });

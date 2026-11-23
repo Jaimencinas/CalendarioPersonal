@@ -215,6 +215,12 @@ main{display:grid;grid-template-columns:minmax(330px,420px) 1fr;gap:28px;padding
 .cu-item small{color:var(--mute);grid-column:1/-1}
 .cu-item.dup{opacity:.6}
 .cu-linked{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#eef3fb;border:1px solid #d6e1f3;border-radius:6px;padding:8px 12px;font-size:13.5px;color:#3c5f9e}
+.cu-filter{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.cu-filter button{border:1px solid #c9d6ee;background:#fff;color:#3c5f9e;border-radius:999px;padding:4px 12px;font-size:13px;font-weight:600;cursor:pointer}
+.cu-filter button.on{background:#3c5f9e;border-color:#3c5f9e;color:#fff}
+.cu-filter button[data-f="vencidas"].on{background:var(--bad);border-color:var(--bad)}
+.cu-filter button .n{opacity:.75;font-weight:500;margin-left:4px}
+.cu-late{color:var(--bad);font-weight:600}
 .cu-tag{font-size:11px;font-weight:700;color:#3c5f9e;background:#e3ebf8;border-radius:4px;padding:1px 6px}
 /* repetitivas */
 .tpl-box{background:#f4f1f9;border:1px solid #e1dbee;border-radius:6px;padding:12px}
@@ -348,6 +354,9 @@ main{display:grid;grid-template-columns:minmax(330px,420px) 1fr;gap:28px;padding
       <div class="f cu-box hidden" id="cuRow">
         <label for="cuQ">⇣ Traer de ClickUp</label>
         <input id="cuQ" placeholder="Busca por nombre, lista o persona… (vacío = las más recientes)" autocomplete="off">
+        <div class="cu-filter" id="cuFilter">
+          <button type="button" data-f="todas" class="on">Todas</button><button type="button" data-f="novencidas">No vencidas</button><button type="button" data-f="vencidas">Vencidas</button><button type="button" data-f="sinfecha">Sin fecha</button>
+        </div>
         <div class="cu-results hidden" id="cuResults"></div>
         <div class="hint" id="cuHint">Elige una tarea de ClickUp para rellenar esta tarea con sus datos.</div>
       </div>
@@ -975,12 +984,17 @@ ${text.slice(0,12000)}
 
 /* ================= CLICKUP: traer tareas ================= */
 const cuIdFromUrl = u => { const m=String(u||"").match(/\/t\/(?:\d+\/)?([A-Za-z0-9_-]+)/); return m?m[1]:null; };
-let cuTimer=null, cuCtl=null, cuList=[];
+let cuTimer=null, cuCtl=null, cuList=[], cuF="todas";
+const CU_F_LBL={todas:"Todas",novencidas:"No vencidas",vencidas:"Vencidas",sinfecha:"Sin fecha"};
+function renderCuFilter(counts){
+  $("#cuFilter").innerHTML = Object.keys(CU_F_LBL).map(k=>`<button type="button" data-f="${k}" class="${cuF===k?"on":""}">${CU_F_LBL[k]}${counts&&counts[k]!=null?`<span class="n">${counts[k]}</span>`:""}</button>`).join("");
+}
+$("#cuFilter").addEventListener("click",e=>{ const b=e.target.closest("button[data-f]"); if(!b||$("#cuQ").disabled) return; cuF=b.dataset.f; renderCuFilter(cuList.counts); cuSearch(); });
 function setupClickUpUI(base){
   const isNew=!base.id;
   $("#cuRow").classList.toggle("hidden", !(isNew && S.role==="admin" && !base.clickupUrl));
   $("#cuQ").value=""; $("#cuResults").classList.add("hidden"); $("#cuResults").innerHTML="";
-  $("#cuQ").disabled = !S.clickupEnabled;
+  $("#cuQ").disabled = !S.clickupEnabled; renderCuFilter(null);
   $("#cuHint").innerHTML = S.clickupEnabled ? "Elige una tarea de ClickUp para rellenar esta tarea con sus datos."
     : '<span style="color:var(--bad)">ClickUp no está conectado: falta la variable <b>CLICKUP_TOKEN</b> en Netlify (con valor en Production) y volver a desplegar.</span>';
   renderCuLinked();
@@ -996,14 +1010,15 @@ async function cuSearch(){
   const q=$("#cuQ").value.trim(), box=$("#cuResults");
   box.classList.remove("hidden"); box.innerHTML=`<div class="cu-item"><small>Buscando en ClickUp…</small></div>`;
   try{
-    cuList = await VoltaAPI.clickupSearch(q, cuCtl.signal);
+    cuList = await VoltaAPI.clickupSearch(q, cuCtl.signal, cuF);
+    renderCuFilter(cuList.counts);
     const have = new Set(S.tasks.map(t=>cuIdFromUrl(t.clickupUrl)).filter(Boolean));
     box.innerHTML = cuList.length ? cuList.map((t,i)=>{
       const w = t.worker ? wById(t.worker).name : (t.assignees.join(", ")||"sin asignar");
-      const plazo = t.dateTo ? `hasta ${short(t.dateTo)}` : "sin fecha";
+      const plazo = t.dateTo ? (t.overdue ? `<span class="cu-late">vencida el ${short(t.dateTo)}</span>` : `hasta ${short(t.dateTo)}`) : "sin fecha";
       return `<div class="cu-item ${have.has(t.id)?"dup":""}" data-i="${i}"><b>${esc(t.title)}</b><span class="hint">${esc(t.statusName)}</span>
-        <small>${esc([t.folder,t.list].filter(Boolean).join(" › "))} · ${esc(w)} · ${esc(plazo)}${t.hours?` · ${fmtH(t.hours)}`:""}${have.has(t.id)?" · ya está en el calendario":""}</small></div>`; }).join("")
-      : `<div class="cu-item"><small>No hay tareas abiertas en ClickUp que coincidan.</small></div>`;
+        <small>${esc([t.folder,t.list].filter(Boolean).join(" › "))} · ${esc(w)} · ${plazo}${t.hours?` · ${fmtH(t.hours)}`:""}${have.has(t.id)?" · ya está en el calendario":""}</small></div>`; }).join("")
+      : `<div class="cu-item"><small>No hay tareas abiertas en ClickUp ${cuF==="todas"?"":"«"+CU_F_LBL[cuF].toLowerCase()+"» "}que coincidan.</small></div>`;
   }catch(e){ if(e&&e.name==="AbortError") return; box.innerHTML=`<div class="cu-item"><small style="color:var(--bad)">${esc(e.message||"No se pudo buscar en ClickUp")}</small></div>`; }
 }
 $("#cuQ").addEventListener("input",()=>{ clearTimeout(cuTimer); cuTimer=setTimeout(cuSearch,350); });
