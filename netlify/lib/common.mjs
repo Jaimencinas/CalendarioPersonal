@@ -2,7 +2,7 @@
 import crypto from "node:crypto";
 
 export const ENV = {
-  token: (process.env.AIRTABLE_TOKEN || "").trim(),
+  token: (process.env.AIRTABLE_TOKEN || "").trim().replace(/^Bearer\s+/i, "").replace(/^["']|["']$/g, "").trim(),
   base: (process.env.AIRTABLE_BASE_ID || "").trim(),
   secret: (process.env.SESSION_SECRET || "").trim(),
   anthropicKey: (process.env.ANTHROPIC_API_KEY || "").trim(),
