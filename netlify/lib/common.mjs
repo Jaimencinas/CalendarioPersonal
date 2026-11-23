@@ -2,11 +2,11 @@
 import crypto from "node:crypto";
 
 export const ENV = {
-  token: process.env.AIRTABLE_TOKEN || "",
-  base: process.env.AIRTABLE_BASE_ID || "",
-  secret: process.env.SESSION_SECRET || "",
-  anthropicKey: process.env.ANTHROPIC_API_KEY || "",
-  anthropicModel: process.env.ANTHROPIC_MODEL || "claude-sonnet-5-5",
+  token: (process.env.AIRTABLE_TOKEN || "").trim(),
+  base: (process.env.AIRTABLE_BASE_ID || "").trim(),
+  secret: (process.env.SESSION_SECRET || "").trim(),
+  anthropicKey: (process.env.ANTHROPIC_API_KEY || "").trim(),
+  anthropicModel: (process.env.ANTHROPIC_MODEL || "claude-sonnet-5-5").trim(),
 };
 
 // id interno <-> nombre en Airtable
@@ -37,6 +37,8 @@ export async function at(path, opts = {}) {
   });
   const txt = await res.text();
   let data; try { data = txt ? JSON.parse(txt) : {}; } catch { data = { raw: txt }; }
+  if (res.status === 401) throw new HttpError(502, "Airtable rechaza el token (401). Revisa AIRTABLE_TOKEN en Netlify: debe ser el token completo (pat….…) y tener valor en Production.");
+  if (res.status === 403 || res.status === 404) throw new HttpError(502, `Airtable ${res.status}: el token no tiene acceso a la base o AIRTABLE_BASE_ID no es correcto.`);
   if (!res.ok) throw new HttpError(502, `Airtable ${res.status}: ${data?.error?.message || data?.error?.type || txt.slice(0, 200)}`);
   return data;
 }
