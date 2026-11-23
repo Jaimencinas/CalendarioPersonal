@@ -41,7 +41,7 @@ Las comprobaciones de seguridad se hacen en el servidor:
    | Variable | Valor |
    |---|---|
    | `AIRTABLE_TOKEN` | Token personal de Airtable (ver abajo) |
-   | `AIRTABLE_BASE_ID` | `app2awOrdZtQ3XmSO` (base «Equipo Volta · Tareas») |
+   | `AIRTABLE_BASE_ID` | El id de la base «Equipo Volta · Tareas» (empieza por `app…`, está en la URL de Airtable) |
    | `SESSION_SECRET` | Una frase larga y aleatoria (por ejemplo, 40 caracteres cualesquiera) |
    | `ANTHROPIC_API_KEY` | *(Opcional)* Clave de la API de Claude para el botón «Ordenar con IA» |
    | `ANTHROPIC_MODEL` | *(Opcional)* Por defecto `claude-sonnet-5-5` |
