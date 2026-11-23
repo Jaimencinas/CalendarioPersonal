@@ -1,0 +1,8 @@
+{
+  "name": "calendario-personal-equipo-volta",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Equipo Volta · calendario de tareas del personal (Netlify + Airtable)",
+  "type": "module",
+  "engines": { "node": ">=18" }
+}

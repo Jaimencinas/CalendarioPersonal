@@ -1,0 +1,1399 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Equipo Volta · Tareas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f3f3f2; --card:#fff; --ink:#1d1f22; --ink2:#4a4f57; --mute:#7c838c; --line:#dcdcd9; --line2:#ececea;
+  --accent:#b5532f; --accent-soft:#f6e3da;
+  --ok:#3f8f5a; --ok-soft:#e3f1e6;
+  --warn:#a8801f; --warn-soft:#f8eecd;
+  --bad:#b23a32; --bad-soft:#f7dcd9;
+  --w-jaime:#3f8f5a; --w-fesp:#b5532f; --w-fven:#b8862b; --w-angel:#3c6e9e; --meet:#6b5b95;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:15px}
+button,input,select,textarea{font:inherit;color:inherit}
+.mono{font-family:"IBM Plex Mono",ui-monospace,monospace}
+.hidden{display:none!important}
+
+/* ---------- HEADER ---------- */
+header.top{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}
+.top-in{display:flex;align-items:center;gap:20px 28px;flex-wrap:wrap;padding:14px 40px 0}
+.brand{display:flex;align-items:baseline;gap:12px;padding-bottom:14px;margin-right:auto}
+.brand h1{margin:0;font-family:"Barlow Condensed";font-weight:700;font-size:34px;letter-spacing:-.3px}
+.brand span{font-family:"IBM Plex Mono";color:var(--mute);font-size:14px}
+.range{display:flex;align-items:center;gap:6px;padding-bottom:14px}
+.range input{border:1px solid var(--line);border-radius:8px;padding:6px 8px;font-family:"IBM Plex Mono";font-size:13px;background:#fff}
+.range .sep{color:var(--mute)}
+.btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:7px 12px;cursor:pointer;font-weight:600;font-size:14px}
+.btn:hover{border-color:#bbb}
+.btn.icon{padding:6px 10px;font-family:"IBM Plex Mono"}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.primary:hover{filter:brightness(.95)}
+.btn.danger{color:var(--bad);border-color:#e8c4c0}
+.btn.ghost{border-color:transparent;background:transparent}
+.btn:disabled{opacity:.5;cursor:default}
+nav.workers{display:flex;gap:4px;align-self:flex-end;flex-wrap:wrap}
+nav.workers button{border:0;background:none;cursor:pointer;padding:6px 12px 16px;font-family:"Barlow Condensed";font-weight:600;font-size:21px;color:var(--ink2);border-bottom:4px solid transparent;display:flex;align-items:center;gap:7px}
+nav.workers button:hover{color:var(--ink)}
+nav.workers button.on{color:var(--ink);border-bottom-color:var(--accent)}
+.dot{width:9px;height:9px;border-radius:50%;display:inline-block;flex:none}
+.who{display:flex;align-items:center;gap:10px;padding-bottom:14px}
+.avatar{width:32px;height:32px;border-radius:50%;color:#fff;display:grid;place-items:center;font-size:13px;font-weight:600;flex:none}
+.who .name{color:var(--ink2)}
+.pill{display:inline-block;border-radius:999px;padding:3px 12px;font-size:13px;font-weight:600;white-space:nowrap}
+.pill.role{border:1px solid var(--line);color:var(--ink2);font-weight:500}
+.st-pend{background:var(--warn-soft);color:var(--warn)}
+.st-curso{background:var(--accent-soft);color:var(--accent)}
+.st-hecha{background:var(--ok-soft);color:var(--ok)}
+.st-bloq{background:var(--bad-soft);color:var(--bad)}
+.st-meet{background:#ebe7f3;color:var(--meet)}
+
+/* ---------- LAYOUT ---------- */
+main{display:grid;grid-template-columns:minmax(330px,420px) 1fr;gap:28px;padding:28px 40px 60px;align-items:start}
+.card{background:var(--card);border:1px solid var(--line);border-radius:6px;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+.card-h{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px 22px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.card-h h2{margin:0;font-family:"Barlow Condensed";font-weight:700;font-size:26px}
+.card-h .sub{color:var(--mute);font-size:13px}
+.right{display:flex;flex-direction:column;gap:28px;min-width:0}
+.hint{font-size:12.5px;color:var(--mute)}
+
+/* ---------- LEFT LIST ---------- */
+.search{padding:14px 22px;border-bottom:1px solid var(--line)}
+.search input{width:100%;border:1px solid #9a9a96;border-radius:3px;padding:8px 10px}
+.list{max-height:calc(100vh - 250px);min-height:240px;overflow:auto}
+.grp-h{padding:8px 22px;background:#fafaf9;border-bottom:1px solid var(--line2);font-family:"IBM Plex Mono";font-size:12px;color:var(--mute);text-transform:uppercase;letter-spacing:.5px;position:sticky;top:0;z-index:1;display:flex;align-items:center;gap:8px}
+.row{display:grid;grid-template-columns:62px 1fr auto;align-items:center;gap:12px;padding:14px 22px;border-bottom:2px solid var(--line2);cursor:pointer;border-left:4px solid transparent}
+.row:hover{background:#fbfaf8}
+.row.sel{background:#fbf5f1;border-left-color:var(--accent)}
+.row .t{font-family:"IBM Plex Mono";color:var(--mute);font-size:13px;line-height:1.2;text-align:center}
+.row .t b{display:block;font-size:20px;color:var(--ink);font-weight:500}
+.row .t.late b{color:var(--bad)}
+.row .ti{font-weight:700;font-size:16px;line-height:1.25}
+.row .su{color:var(--ink2);font-size:14px;margin-top:3px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.row .due{font-size:12.5px;margin-top:3px}
+.due.late{color:var(--bad);font-weight:600}.due.soon{color:var(--warn);font-weight:600}.due.ok{color:var(--mute)}
+.empty{padding:40px 22px;text-align:center;color:var(--mute)}
+
+/* ---------- CARGA ---------- */
+.load{padding:18px 22px 20px;display:grid;gap:16px}
+.lw{display:grid;grid-template-columns:170px 1fr 150px;gap:14px;align-items:center}
+.lw .nm{display:flex;align-items:center;gap:9px;font-weight:600}
+.lw .nm .avatar{width:28px;height:28px;font-size:12px}
+.stack{position:relative;height:30px;background:repeating-linear-gradient(90deg,#f4f3f1 0 calc(12.5% - 1px),#e7e6e3 calc(12.5% - 1px) 12.5%);border-radius:5px;overflow:hidden;display:flex}
+.seg{height:100%;border-right:2px solid #fff;cursor:pointer;display:flex;align-items:center;padding:0 7px;font-size:11.5px;color:#fff;white-space:nowrap;overflow:hidden;min-width:0;transition:filter .1s}
+.seg:hover{filter:brightness(1.1)}
+.seg.sel{outline:2px solid var(--ink);outline-offset:-2px}
+.seg.meet{background:repeating-linear-gradient(45deg,#8a7cb3 0 6px,#7b6ca6 6px 12px)}
+.seg.hecha{opacity:.45}
+.over{position:absolute;right:0;top:0;bottom:0;width:4px;background:var(--bad)}
+.lw .tot{text-align:right;font-size:13px;line-height:1.3}
+.lw .tot b{font-family:"Barlow Condensed";font-size:24px;font-weight:700}
+.lw .tot .free{color:var(--ok)}.lw .tot .ovr{color:var(--bad)}
+.load-foot{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+
+/* ---------- GANTT ---------- */
+.gantt-wrap{overflow:auto}
+.gantt{display:grid;min-width:620px;position:relative}
+.g-hc{position:sticky;top:0;background:#fff;z-index:2;border-bottom:1px solid var(--line);padding:8px 4px;text-align:center}
+.g-hc .dn{font-family:"IBM Plex Mono";font-size:11.5px;color:var(--mute);text-transform:uppercase}
+.g-hc .dd{font-family:"Barlow Condensed";font-weight:700;font-size:22px;line-height:1.05}
+.g-hc.today .dd{color:#fff;background:var(--accent);border-radius:6px;padding:0 7px;display:inline-block}
+.g-hc.we{background:#fafaf8}
+.g-hc .mt{margin-top:4px;font-size:10.5px;font-weight:600;color:var(--meet);background:#ebe7f3;border-radius:99px;padding:1px 6px;display:inline-block}
+.g-lbl{padding:8px 12px;border-bottom:1px solid var(--line2);border-right:1px solid var(--line);font-size:13px;display:flex;align-items:center;gap:8px;font-weight:600;background:#fff;position:sticky;left:0;z-index:1}
+.g-wk{grid-column:1/-1;padding:8px 12px;background:#fafaf9;border-bottom:1px solid var(--line2);font-family:"IBM Plex Mono";font-size:12px;color:var(--ink2);display:flex;align-items:center;gap:8px;text-transform:uppercase;letter-spacing:.4px}
+.g-lane{position:relative;border-bottom:1px solid var(--line2);min-height:44px}
+.g-bg{position:absolute;inset:0;display:grid}
+.g-bg div{border-right:1px solid var(--line2)}
+.g-bg div.we{background:#fafaf8}
+.g-bg div.meetday{background:repeating-linear-gradient(45deg,transparent 0 7px,rgba(107,91,149,.06) 7px 14px)}
+.bar{position:absolute;top:7px;height:30px;border-radius:6px;padding:0 10px;display:flex;align-items:center;gap:8px;font-size:12.5px;cursor:pointer;overflow:hidden;white-space:nowrap;border:1px solid rgba(0,0,0,.06);border-left:4px solid;transition:box-shadow .12s}
+.bar:hover{box-shadow:0 2px 8px rgba(0,0,0,.12)}
+.bar.sel{outline:2px solid var(--ink)}
+.bar b{font-weight:600;overflow:hidden;text-overflow:ellipsis}
+.bar .h{font-family:"IBM Plex Mono";font-size:11px;color:var(--ink2);flex:none}
+.bar.cl{border-top-left-radius:0;border-bottom-left-radius:0}
+.bar.cr{border-top-right-radius:0;border-bottom-right-radius:0;border-right:2px dashed rgba(0,0,0,.25)}
+.bar.hecha{opacity:.5}
+.bar.bloq{box-shadow:inset 0 0 0 1px var(--bad)}
+.today-line{position:absolute;top:0;bottom:0;width:2px;background:var(--accent);z-index:3;pointer-events:none;opacity:.7}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--ink2)}
+.legend span{display:flex;align-items:center;gap:6px}
+.legend i{width:10px;height:10px;border-radius:3px;display:inline-block}
+
+/* ---------- DETAIL ---------- */
+.detail-empty{padding:46px 20px;text-align:center;color:var(--mute);font-size:17px}
+.det{padding:22px 26px 26px}
+.det-top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.det-top h3{margin:8px 0 0;font-family:"Barlow Condensed";font-weight:700;font-size:30px;line-height:1.05}
+.det-actions{display:flex;gap:8px}
+.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:20px 0}
+.meta div{background:#fafaf9;border:1px solid var(--line2);border-radius:6px;padding:10px 12px}
+.meta small{display:block;color:var(--mute);font-size:12px;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px}
+.meta b{font-weight:600}
+.kpis{display:grid;grid-template-columns:1.3fr 1fr;gap:14px;margin-bottom:22px}
+.pct{border:1px solid var(--line);border-radius:8px;padding:16px 18px;display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:center}
+.pct .big{font-family:"Barlow Condensed";font-weight:700;font-size:46px;line-height:1;color:var(--accent)}
+.pct p{margin:0 0 8px;color:var(--ink2);font-size:14px}
+.pbar{height:12px;background:var(--line2);border-radius:99px;overflow:hidden}
+.pbar i{display:block;height:100%;border-radius:99px}
+.timebox{border:1px solid var(--line);border-radius:8px;padding:14px 18px}
+.timebox .big{font-family:"Barlow Condensed";font-weight:700;font-size:32px;line-height:1}
+.timebox p{margin:6px 0 10px;color:var(--ink2);font-size:13.5px}
+.sec-t{font-family:"Barlow Condensed";font-weight:700;font-size:20px;margin:0 0 8px}
+.desc{white-space:pre-wrap;line-height:1.55;border-left:3px solid var(--line);padding:4px 0 4px 14px;margin-bottom:22px}
+.atts{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.att{border:1px solid var(--line);border-radius:6px;overflow:hidden;background:#fff;text-decoration:none;color:var(--ink);display:flex;flex-direction:column}
+.att .pv{height:100px;background:#f1f0ee;display:grid;place-items:center;font-family:"IBM Plex Mono";font-size:20px;color:var(--mute);overflow:hidden}
+.att .pv img,.att .pv video{width:100%;height:100%;object-fit:cover}
+.att .nm{padding:7px 9px;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* ---------- MODALS ---------- */
+.ov{position:fixed;inset:0;background:rgba(29,31,34,.45);z-index:50;display:grid;place-items:center;padding:20px;overflow:auto}
+.modal{background:#fff;border-radius:8px;width:min(680px,100%);box-shadow:0 18px 50px rgba(0,0,0,.25);max-height:calc(100vh - 40px);display:flex;flex-direction:column}
+.modal-b{padding:20px 22px;overflow:auto;display:grid;gap:14px}
+.modal-f{padding:14px 22px;border-top:1px solid var(--line);display:flex;gap:8px;justify-content:flex-end;align-items:center}
+.modal-f .msg{margin-right:auto;font-size:13px;color:var(--bad)}
+.f{display:grid;gap:5px}
+.f label{font-size:13px;font-weight:600;color:var(--ink2)}
+.f input,.f select,.f textarea{border:1px solid #b9b9b4;border-radius:5px;padding:8px 10px;background:#fff;width:100%}
+.f textarea{min-height:150px;resize:vertical;line-height:1.5}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.calc{background:#fafaf9;border:1px solid var(--line2);border-radius:6px;padding:10px 12px;font-size:13.5px;color:var(--ink2);line-height:1.5}
+.desc-tools{display:flex;align-items:center;gap:10px}
+.mic{display:inline-flex;align-items:center;gap:7px}
+.mic.live{background:var(--bad);border-color:var(--bad);color:#fff;animation:pulse 1.3s infinite}
+.mic.off{color:var(--mute)}
+@keyframes pulse{50%{box-shadow:0 0 0 6px rgba(178,58,50,.15)}}
+.partial{font-size:13px;color:var(--mute);font-style:italic}
+.edit-atts{display:grid;gap:6px}
+.edit-att{display:flex;align-items:center;gap:10px;border:1px solid var(--line2);border-radius:5px;padding:6px 10px;font-size:13.5px}
+.edit-att .n{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* login */
+.login{width:min(520px,100%);background:#fff;border-radius:8px;box-shadow:0 18px 50px rgba(0,0,0,.2);padding:30px 32px}
+.login h1{margin:0;font-family:"Barlow Condensed";font-weight:700;font-size:40px}
+.login .mono{color:var(--mute)}
+.login h4{margin:26px 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:.6px;color:var(--mute)}
+.wk-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.wk-btns button{display:flex;align-items:center;gap:10px;padding:12px;border:1px solid var(--line);border-radius:8px;background:#fff;cursor:pointer;font-weight:600;text-align:left}
+.wk-btns button:hover{border-color:var(--accent);background:#fdf8f5}
+.code-boxes{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+.code-boxes input{height:58px;text-align:center;font-family:"IBM Plex Mono";font-size:26px;border:1px solid #b9b9b4;border-radius:8px;background:#fff;width:100%}
+.code-boxes input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.code-boxes.shake{animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.codes{display:grid;gap:8px}
+.code-row{display:grid;grid-template-columns:1fr 130px;gap:10px;align-items:center;font-size:14px}
+.code-row > span{display:flex;align-items:center;gap:8px;font-weight:600}
+#loginOv{background:var(--bg)}
+.code-row input{border:1px solid #b9b9b4;border-radius:5px;padding:7px 10px;font-family:"IBM Plex Mono";letter-spacing:3px;text-align:center}
+.adm{display:flex;gap:8px}
+.adm input{flex:1;border:1px solid #b9b9b4;border-radius:5px;padding:9px 10px}
+.err{color:var(--bad);font-size:13px;min-height:18px;margin-top:6px}
+
+/* IA */
+.btn.ai{border-color:#d9cfee;color:var(--meet)}
+.btn.ai:hover{border-color:var(--meet)}
+.btn.ai.busy{opacity:.7;cursor:progress}
+.ai-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;background:#f4f1f9;border:1px solid #e1dbee;border-radius:6px;padding:8px 10px;font-size:13px;color:#3f3560}
+.ai-bar .btn{padding:4px 10px;font-size:13px}
+/* repetitivas */
+.tpl-box{background:#f4f1f9;border:1px solid #e1dbee;border-radius:6px;padding:12px}
+.tpl-box label{color:var(--meet)!important}
+.chk{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;color:var(--ink2);cursor:pointer}
+.chk input{width:16px;height:16px;accent-color:var(--accent)}
+.rep{font-size:11px;font-weight:700;color:var(--meet);background:#ebe7f3;border-radius:4px;padding:1px 6px}
+/* prioridad */
+.prio{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;border-radius:4px;padding:1px 6px}
+.prio.alta{background:var(--bad);color:#fff}
+.prio.baja{background:#eef0f2;color:var(--mute)}
+.bar .pm{flex:none;width:16px;height:16px;border-radius:50%;background:var(--bad);color:#fff;font-size:11px;font-weight:700;display:grid;place-items:center}
+.bar.prio-baja{opacity:.75}
+/* arrastrar */
+.gantt.editable .bar{cursor:grab;touch-action:none;user-select:none}
+.gantt.editable .bar.dragging{cursor:grabbing;box-shadow:0 6px 18px rgba(0,0,0,.2);z-index:6;opacity:.92}
+.gantt.editable .bar .hd{position:absolute;top:0;bottom:0;width:8px;cursor:ew-resize}
+.gantt.editable .bar .hd.l{left:-2px}.gantt.editable .bar .hd.r{right:0}
+.gantt.editable .bar .hd:hover{background:rgba(0,0,0,.08)}
+.drag-tip{position:fixed;z-index:70;background:var(--ink);color:#fff;font-family:"IBM Plex Mono";font-size:12px;padding:4px 8px;border-radius:5px;pointer-events:none}
+/* acta */
+.acta{display:grid;gap:10px;margin-bottom:22px}
+.acta textarea{border:1px solid #b9b9b4;border-radius:5px;padding:10px 12px;min-height:150px;resize:vertical;line-height:1.5;width:100%}
+.acta-tools{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.acu{display:grid;gap:6px}
+.acu-row{display:flex;align-items:center;gap:10px;border:1px solid var(--line2);border-radius:6px;padding:7px 10px;font-size:14px}
+.acu-row span{flex:1}
+.acu-row.done{background:var(--ok-soft);border-color:#cfe6d5}
+.mt-tasks{display:grid;gap:6px;margin-bottom:22px}
+.mt-task{display:flex;align-items:center;gap:10px;font-size:14px;padding:6px 10px;border:1px solid var(--line2);border-radius:6px;cursor:pointer}
+.mt-task:hover{background:#fbfaf8}
+
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:8px;font-size:14px;z-index:60;opacity:0;transition:opacity .2s;pointer-events:none;max-width:90vw}
+.toast.on{opacity:1}
+.banner{background:var(--warn-soft);color:#6d5512;padding:8px 40px;font-size:13.5px}
+
+@media (max-width:1050px){
+  main{grid-template-columns:1fr;padding:20px}
+  .top-in{padding:12px 20px 0}
+  .list{max-height:none}
+  .grid3,.grid2,.kpis{grid-template-columns:1fr}
+  .lw{grid-template-columns:1fr;gap:6px}
+  .lw .tot{text-align:left}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-in">
+    <div class="brand"><h1>Equipo Volta</h1><span>Volta Baterías · Tareas</span></div>
+    <div class="range">
+      <button class="btn icon" id="prev" title="Semana anterior">‹</button>
+      <input type="date" id="from" aria-label="Desde">
+      <span class="sep">–</span>
+      <input type="date" id="to" aria-label="Hasta">
+      <button class="btn icon" id="next" title="Semana siguiente">›</button>
+      <button class="btn" id="today">Esta semana</button>
+    </div>
+    <nav class="workers" id="workerTabs"></nav>
+    <div class="who">
+      <div class="avatar" id="whoAv">·</div>
+      <span class="name" id="whoName"></span>
+      <span class="pill role" id="whoRole"></span>
+      <span class="mono hint hidden" id="tzClock" title="Hora actual"></span>
+      <button class="btn" id="pdfBtn" title="Descargar en PDF las tareas del periodo filtrado">⤓ PDF</button>
+      <button class="btn hidden" id="settingsBtn">Ajustes</button>
+      <button class="btn" id="logout">Salir</button>
+    </div>
+  </div>
+</header>
+<div class="banner hidden" id="banner"></div>
+
+<main>
+  <section class="card" aria-label="Tareas">
+    <div class="card-h">
+      <div><h2 id="listTitle">Tareas</h2><div class="sub" id="listSub"></div></div>
+      <button class="btn primary hidden" id="newTask">+ Nueva tarea</button>
+    </div>
+    <div class="search"><input id="q" placeholder="Buscar tarea, trabajador o descripción"></div>
+    <div class="list" id="list"><div class="empty">Cargando tareas…</div></div>
+  </section>
+
+  <div class="right">
+    <section class="card">
+      <div class="card-h">
+        <div><h2>Carga de trabajo</h2><div class="sub" id="loadSub"></div></div>
+        <div class="legend"><span><i style="background:var(--meet)"></i>Reunión semanal</span><span><i style="background:#e7e6e3"></i>Horas libres</span></div>
+      </div>
+      <div class="load" id="load"></div>
+    </section>
+
+    <section class="card">
+      <div class="card-h">
+        <div><h2>Plazos</h2><div class="sub" id="ganttSub">Cada barra va del día de inicio al día límite. El trabajador reparte las horas como quiera dentro del plazo.</div></div>
+      </div>
+      <div class="gantt-wrap"><div class="gantt" id="gantt"></div></div>
+    </section>
+
+    <section class="card" id="detail">
+      <div class="detail-empty">Elige una tarea para ver su descripción, horas y adjuntos.</div>
+    </section>
+  </div>
+</main>
+
+<!-- LOGIN -->
+<div class="ov" id="loginOv">
+  <div class="login">
+    <h1>Equipo Volta</h1>
+    <div class="mono">Volta Baterías · Tareas del equipo</div>
+    <h4>Introduce tu código de acceso</h4>
+    <form id="codeForm" autocomplete="off">
+      <div class="code-boxes" id="codeBoxes"><input inputmode="numeric" maxlength="1" aria-label="Dígito 1" data-i="0"><input inputmode="numeric" maxlength="1" aria-label="Dígito 2" data-i="1"><input inputmode="numeric" maxlength="1" aria-label="Dígito 3" data-i="2"><input inputmode="numeric" maxlength="1" aria-label="Dígito 4" data-i="3"><input inputmode="numeric" maxlength="1" aria-label="Dígito 5" data-i="4"><input inputmode="numeric" maxlength="1" aria-label="Dígito 6" data-i="5"></div>
+      <button class="btn primary" type="submit" style="width:100%;margin-top:14px;padding:11px">Entrar</button>
+    </form>
+    <div class="err" id="admErr"></div>
+    <div class="hint">Cada persona tiene su propio código de 6 dígitos. Si no lo tienes, pídeselo a Jaime.</div>
+  </div>
+</div>
+
+<!-- TASK EDITOR -->
+<div class="ov hidden" id="editOv">
+  <div class="modal">
+    <div class="card-h"><h2 id="editTitle">Nueva tarea</h2><button class="btn ghost" data-close>✕</button></div>
+    <form class="modal-b" id="editForm">
+      <div class="f tpl-box hidden" id="tplRow">
+        <label for="eTpl">↻ Tarea repetitiva semanal</label>
+        <div style="display:flex;gap:8px"><select id="eTpl" style="flex:1"></select><button type="button" class="btn danger hidden" id="tplDel">Quitar de la lista</button></div>
+        <div class="hint" id="tplHint">Elige una para rellenar la tarea con sus datos y las fechas de esta semana.</div>
+      </div>
+      <div class="f"><label for="eTitle">Título</label><input id="eTitle" required maxlength="140" placeholder="Ej. Reparar batería bici L26-0030"></div>
+      <div class="grid3">
+        <div class="f"><label for="eWorker">Trabajador</label><select id="eWorker"></select></div>
+        <div class="f"><label for="ePrio">Prioridad</label>
+          <select id="ePrio"><option value="alta">Urgente</option><option value="normal" selected>Normal</option><option value="baja">Baja</option></select></div>
+        <div class="f"><label for="eStatus">Estado</label>
+          <select id="eStatus"><option value="pend">Pendiente</option><option value="curso">En curso</option><option value="hecha">Hecha</option><option value="bloq">Incidencia</option></select></div>
+      </div>
+      <div class="grid3">
+        <div class="f"><label for="eFrom">Desde</label><input type="date" id="eFrom" required></div>
+        <div class="f"><label for="eTo">Hasta (día límite)</label><input type="date" id="eTo" required></div>
+        <div class="f"><label for="eHours">Horas totales</label><input type="number" id="eHours" min="0.25" max="400" step="0.25" required></div>
+      </div>
+      <div class="calc" id="eCalc"></div>
+      <div class="f">
+        <div class="desc-tools">
+          <label for="eDesc" style="margin-right:auto">Descripción</label>
+          <span class="partial" id="partial"></span>
+          <button type="button" class="btn mic" id="micBtn" data-target="eDesc" data-hint="micHint">● Dictar</button>
+          <button type="button" class="btn ai hidden" id="aiBtn" title="Claude reescribe lo dictado como objetivo, pasos, material y precauciones">✨ Ordenar con IA</button>
+        </div>
+        <textarea id="eDesc" placeholder="Explica qué hay que hacer, pasos, material, precauciones…"></textarea>
+        <div class="hint" id="micHint"></div>
+        <div class="ai-bar hidden" id="aiBar"></div>
+      </div>
+      <div class="f">
+        <div class="desc-tools"><label style="margin-right:auto">Adjuntos</label>
+          <label class="btn" id="attAddLbl" for="attInput">+ Añadir archivos</label>
+          <input type="file" id="attInput" multiple class="hidden">
+        </div>
+        <div class="edit-atts" id="eAtts"></div>
+        <div class="hint" id="attHint"></div>
+      </div>
+      <label class="chk"><input type="checkbox" id="eTplSave"> <span id="eTplSaveLbl">Guardar como tarea repetitiva semanal</span></label>
+      <div class="hint" id="eTplSaveHint" style="margin-top:-8px">Aparecerá en la lista «Tarea repetitiva semanal» al crear tareas, con el mismo trabajador, horas, prioridad, descripción, adjuntos y días de la semana.</div>
+    </form>
+    <div class="modal-f">
+      <span class="msg" id="editMsg"></span>
+      <button class="btn danger hidden" id="delBtn">Eliminar</button>
+      <button class="btn" data-close>Cancelar</button>
+      <button class="btn primary" id="saveBtn">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS -->
+<div class="ov hidden" id="setOv">
+  <div class="modal" style="width:min(520px,100%)">
+    <div class="card-h"><h2>Ajustes</h2><button class="btn ghost" data-close>✕</button></div>
+    <div class="modal-b">
+      <div class="sec-t">Reunión semanal</div>
+      <div class="grid3">
+        <div class="f"><label for="mDay">Día</label><select id="mDay"><option value="1">Lunes</option><option value="2">Martes</option><option value="3">Miércoles</option><option value="4">Jueves</option><option value="5">Viernes</option></select></div>
+        <div class="f"><label for="mTime">Hora (España)</label><input type="time" id="mTime" step="900"></div>
+        <div class="f"><label for="mDur">Duración (h)</label><input type="number" id="mDur" min="0.25" max="8" step="0.25"></div>
+      </div>
+      <div class="hint" id="mTzHint" style="margin-top:-6px"></div>
+      <div class="f"><label for="mNote">Nota de la reunión (opcional)</label><input id="mNote" maxlength="200" placeholder="Ej. Repaso de encargos y prioridades"></div>
+      <div class="sec-t" style="margin-top:8px">Códigos de acceso (6 dígitos)</div>
+      <div class="hint" style="margin-top:-8px">Por seguridad no se muestran los actuales. Escribe uno nuevo solo para cambiarlo; deja vacío para mantenerlo.</div>
+      <div class="codes" id="codeEdit"></div>
+    </div>
+    <div class="modal-f"><span class="msg" id="setMsg"></span><button class="btn" data-close>Cancelar</button><button class="btn primary" id="setSave">Guardar ajustes</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="volta-adapter.js"></script>
+<script>
+/* ================= CONFIG ================= */
+// Orden alfabético. Los ids se mantienen para no perder las tareas ya creadas.
+const WORKERS = [
+  {id:"angel", name:"Ángel",            short:"Á",  color:"var(--w-angel)"},
+  {id:"fesp",  name:"Fernando",         short:"F",  color:"var(--w-fesp)"},
+  {id:"fven",  name:"Fernando Molleja", short:"FM", color:"var(--w-fven)", tz:"America/Caracas", tzName:"Venezuela", tzShort:"VE"},
+  {id:"jaime", name:"Jaime",            short:"J",  color:"var(--w-jaime)"},
+];
+const WEEK_HOURS = 40, DAY_HOURS = 8;
+const STATUS = {pend:["Pendiente","st-pend"], curso:["En curso","st-curso"], hecha:["Hecha","st-hecha"], bloq:["Incidencia","st-bloq"]};
+const PRIO = {alta:["Urgente",0], normal:["Normal",1], baja:["Baja",2]};
+const prioRank = p => (PRIO[p]||PRIO.normal)[1];
+const prioBadge = p => p==="alta" ? `<span class="prio alta">! Urgente</span>` : p==="baja" ? `<span class="prio baja">Baja</span>` : "";
+const DOW = ["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"];
+const DOW_L = ["Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"];
+const MON = ["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
+/* ---- zonas horarias: la reunión se fija en hora de España ---- */
+const BASE_TZ = "Europe/Madrid";
+function tzParts(tz, ms){
+  const p=new Intl.DateTimeFormat("en-US",{timeZone:tz,hourCycle:"h23",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit"}).formatToParts(new Date(ms));
+  const g=t=>Number((p.find(x=>x.type===t)||{}).value);
+  return {y:g("year"),m:g("month"),d:g("day"),h:g("hour")%24,mi:g("minute")};
+}
+function tzOffsetMin(tz, ms){ const q=tzParts(tz,ms); return (Date.UTC(q.y,q.m-1,q.d,q.h,q.mi) - Math.floor(ms/60000)*60000)/60000; }
+function spainToUTC(dateStr, timeStr){
+  const [y,m,d]=dateStr.split("-").map(Number), [h,mi]=String(timeStr||"09:00").split(":").map(Number);
+  const guess=Date.UTC(y,m-1,d,h,mi||0);
+  let ms=guess-tzOffsetMin(BASE_TZ,guess)*60000;
+  return guess-tzOffsetMin(BASE_TZ,ms)*60000;
+}
+function timeIn(tz, dateStr, timeStr){
+  try{ const q=tzParts(tz, spainToUTC(dateStr,timeStr)); const dd=`${q.y}-${String(q.m).padStart(2,"0")}-${String(q.d).padStart(2,"0")}`;
+    return {time:`${String(q.h).padStart(2,"0")}:${String(q.mi).padStart(2,"0")}`, date:dd, shifted: dd!==dateStr}; }
+  catch(e){ return {time:timeStr, date:dateStr, shifted:false}; }
+}
+const nowIn = tz => { try{ return new Intl.DateTimeFormat("es-ES",{timeZone:tz,hour:"2-digit",minute:"2-digit"}).format(new Date()); }catch(e){ return ""; } };
+const wById = id => WORKERS.find(w=>w.id===id) || {id, name:id||"—", short:"?", color:"#999"};
+
+function viewerTzWorker(){
+  const id = S.role==="worker" ? S.me : (S.worker!=="all" ? S.worker : null);
+  const w = id && WORKERS.find(x=>x.id===id); return w && w.tz ? w : null;
+}
+const DOWc = d => ["dom","lun","mar","mié","jue","vie","sáb"][parse(d).getDay()];
+/* compact = para la lista y el diagrama; largo = para el detalle y el PDF */
+function meetTime(date, compact){
+  const base=S.cfg.meetingTime||"09:00";
+  const w=viewerTzWorker();
+  if(w){
+    const l=timeIn(w.tz,date,base), dayTxt=l.shifted?` (${DOWc(l.date)})`:"";
+    const who = S.role==="worker" ? "tu hora" : "hora "+w.tzName;
+    return compact ? `${l.time}${dayTxt} ${w.tzShort} · ${base} ES` : `${l.time}${dayTxt} ${who} · ${base} en España`;
+  }
+  const others = WORKERS.filter(x=>x.tz);
+  if(!others.length || S.role==="worker") return base;
+  return compact ? `${base} · ${others.map(x=>{ const l=timeIn(x.tz,date,base); return `${l.time} ${x.tzShort}`; }).join(" · ")}`
+                 : `${base} en España · ${others.map(x=>{ const l=timeIn(x.tz,date,base); return `${l.time}${l.shifted?` (${DOWc(l.date)})`:""} en ${x.tzName} (${x.name})`; }).join(" · ")}`;
+}
+
+/* ================= STATE ================= */
+const S = {
+  role:null, me:null, worker:"all", from:null, to:null,
+  tasks:[], cfg:{meetingDay:1, meetingTime:"09:00", meetingHours:1, meetingNote:""},
+  loaded:false, sel:null, q:"", db:null, assets:null, dict:null, dictTried:false, edit:null,
+  sample:null, actaOrig:{}, templates:[], meetings:{}, actaDraft:{}, downloads:null, dictTargetId:null, dictHintId:null, dictBtn:null, drag:null,
+};
+
+/* ================= UTILS ================= */
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const pad = n => String(n).padStart(2,"0");
+const ymd = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const parse = s => { const [y,m,d] = String(s).split("-").map(Number); return new Date(y,(m||1)-1,d||1); };
+const addDays = (d,n) => { const x = new Date(d); x.setDate(x.getDate()+n); return x; };
+const monday = d => { const x = new Date(d.getFullYear(), d.getMonth(), d.getDate()); return addDays(x,-((x.getDay()+6)%7)); };
+const isWE = s => { const g=parse(s).getDay(); return g===0||g===6; };
+const fmtH = h => { const tot = Math.round((Number(h)||0)*60); const H = Math.floor(tot/60), M = tot%60; return H && M ? `${H} h ${pad(M)} min` : H ? `${H} h` : `${M} min`; };
+const fmtN = n => (Math.round(n*10)/10).toLocaleString("es-ES");
+const short = s => { const d=parse(s); return `${d.getDate()} ${MON[d.getMonth()]}`; };
+const nice = s => { const d=parse(s); return `${DOW_L[d.getDay()]} ${d.getDate()} ${MON[d.getMonth()]}`; };
+const todayS = () => ymd(new Date());
+const daysBetween = (a,b) => Math.round((parse(b)-parse(a))/864e5);
+function toast(msg){ const t=$("#toast"); t.textContent=msg; t.classList.add("on"); clearTimeout(toast._t); toast._t=setTimeout(()=>t.classList.remove("on"),3200); }
+async function sha(s){ try{ const b=await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s)); return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join(""); }catch(e){ return "plain:"+s; } }
+const store = { get(k){ try{ return JSON.parse(sessionStorage.getItem(k)); }catch(e){ return null; } }, set(k,v){ try{ sessionStorage.setItem(k,JSON.stringify(v)); }catch(e){} }, del(k){ try{ sessionStorage.removeItem(k); }catch(e){} } };
+
+/* ================= CÁLCULO DE HORAS =================
+   Una tarea tiene un plazo (desde–hasta) y unas horas totales.
+   Para repartirla entre semanas se reparte por igual entre los días laborables (L–V) del plazo. */
+function rangeDays(a,b){ const out=[]; let d=parse(a); const e=parse(b); let g=0; while(d<=e && g++<400){ out.push(ymd(d)); d=addDays(d,1);} return out; }
+function workdays(a,b){ return rangeDays(a,b).filter(s=>!isWE(s)).length; }
+function overlap(t){ const a = t.from>S.from?t.from:S.from, b = t.to<S.to?t.to:S.to; return a<=b ? [a,b] : null; }
+function hoursInPeriod(t){
+  const o=overlap(t); if(!o) return 0;
+  const tw=workdays(t.from,t.to);
+  if(!tw){ return t.hours * (daysBetween(o[0],o[1])+1)/(daysBetween(t.from,t.to)+1); }
+  return t.hours * workdays(o[0],o[1]) / tw;
+}
+function weeklyHours(t){ const wd=workdays(t.from,t.to); return wd<=5 ? t.hours : t.hours/(wd/5); }
+function dailyPace(t){ const wd=Math.max(1,workdays(t.from,t.to)); return t.hours/wd; }
+function periodCapacity(){ return Math.max(1,workdays(S.from,S.to)) * DAY_HOURS; }
+function meetingsInPeriod(){ return rangeDays(S.from,S.to).filter(s=>parse(s).getDay()===Number(S.cfg.meetingDay)); }
+function meetingHoursInPeriod(){ return meetingsInPeriod().length * (Number(S.cfg.meetingHours)||1); }
+function dueInfo(t){
+  if(t.status==="hecha") return {cls:"ok", txt:"Terminada"};
+  const d=daysBetween(todayS(), t.to);
+  if(d<0) return {cls:"late", txt:`Vencida hace ${-d} día${d===-1?"":"s"}`};
+  if(d===0) return {cls:"soon", txt:"Vence hoy"};
+  if(d<=2) return {cls:"soon", txt:`Vence en ${d} día${d===1?"":"s"}`};
+  return {cls:"ok", txt:`Vence en ${d} días`};
+}
+
+/* ================= DERIVED ================= */
+function tasksInPeriod(){ return S.tasks.filter(t=>overlap(t)); }
+function visibleTasks(){
+  const q=S.q.trim().toLowerCase();
+  return tasksInPeriod()
+    .filter(t=>S.worker==="all"||t.worker===S.worker)
+    .filter(t=>!q||[t.title,t.description,wById(t.worker).name].join(" ").toLowerCase().includes(q))
+    .sort((a,b)=> prioRank(a.priority)-prioRank(b.priority) || a.to.localeCompare(b.to) || a.from.localeCompare(b.from));
+}
+
+/* ================= RENDER: header ================= */
+function renderTabs(){
+  if(S.role==="worker" && S.me) S.worker=S.me;
+  const tabs = S.role==="worker" && S.me ? [wById(S.me)] : [{id:"all",name:"Todos"},...WORKERS];
+  $("#pdfBtn").textContent = S.worker==="all" ? "⤓ PDF de todos" : `⤓ PDF de ${wById(S.worker).name}`;
+  $("#pdfBtn").title = S.worker==="all" ? "Descargar en PDF las tareas de todo el equipo (una página por trabajador) en las fechas filtradas" : `Descargar en PDF solo las tareas de ${wById(S.worker).name} en las fechas filtradas`;
+  $("#workerTabs").innerHTML = tabs.map(w=>`<button data-w="${w.id}" class="${S.worker===w.id?"on":""}">${w.color?`<span class="dot" style="background:${w.color}"></span>`:""}${esc(w.name)}</button>`).join("");
+}
+function renderClock(){
+  const el=$("#tzClock"); if(!el) return;
+  const w = S.role==="worker" ? (WORKERS.find(x=>x.id===S.me&&x.tz)||null) : null;
+  const others = WORKERS.filter(x=>x.tz);
+  let txt="";
+  if(w) txt=`Tu hora ${nowIn(w.tz)} · España ${nowIn(BASE_TZ)}`;
+  else if(S.role==="admin" && others.length) txt=others.map(x=>`${x.tzName} ${nowIn(x.tz)}`).join(" · ");
+  el.textContent=txt; el.classList.toggle("hidden",!txt);
+}
+setInterval(renderClock, 30000);
+function renderWho(){
+  renderClock();
+  if(S.role==="admin"){ $("#whoAv").textContent="A"; $("#whoAv").style.background="var(--accent)"; $("#whoName").textContent="Administración"; $("#whoRole").textContent="Administrador"; }
+  else if(S.me){ const w=wById(S.me); $("#whoAv").textContent=w.short; $("#whoAv").style.background=w.color; $("#whoName").textContent=w.name; $("#whoRole").textContent="Trabajador"; }
+  const adm=S.role==="admin";
+  $("#newTask").classList.toggle("hidden",!adm); $("#settingsBtn").classList.toggle("hidden",!adm);
+}
+
+/* ================= RENDER: list ================= */
+function renderList(){
+  const w = S.worker==="all"?null:wById(S.worker);
+  $("#listTitle").textContent = w?`Tareas de ${w.name}`:"Tareas";
+  $("#listSub").textContent = `${short(S.from)} – ${short(S.to)} ${parse(S.to).getFullYear()} · por prioridad y día límite`;
+  if(!S.loaded){ $("#list").innerHTML=`<div class="empty">Cargando tareas…</div>`; return; }
+  const items=visibleTasks();
+  const meets = meetingsInPeriod();
+  let html = meets.map(d=>`<div class="row ${S.sel==="meet-"+d?"sel":""}" data-id="meet-${d}">
+      <span class="t">${DOW[parse(d).getDay()]}<b>${parse(d).getDate()}</b></span>
+      <div><div class="ti">Reunión semanal</div><div class="su"><span class="dot" style="background:var(--meet)"></span>Todo el equipo · <span class="mono">${esc(meetTime(d,true))} · ${fmtH(S.cfg.meetingHours)}</span></div></div>
+      <span class="pill st-meet">Reunión</span></div>`).join("");
+  if(!items.length){
+    html += `<div class="empty">No hay tareas en estas fechas${w?` para ${esc(w.name)}`:""}.${S.role==="admin"?"<br>Pulsa «Nueva tarea» para crear una.":""}</div>`;
+    $("#list").innerHTML=html; return;
+  }
+  const groups = w ? [[w,items]] : WORKERS.map(x=>[x,items.filter(t=>t.worker===x.id)]).filter(g=>g[1].length);
+  for(const [wk,arr] of groups){
+    if(!w) html += `<div class="grp-h"><span class="dot" style="background:${wk.color}"></span>${esc(wk.name)} · ${arr.length} tarea${arr.length>1?"s":""}</div>`;
+    for(const t of arr){
+      const st=STATUS[t.status]||STATUS.pend, du=dueInfo(t), d=parse(t.to);
+      html += `<div class="row ${S.sel===t.id?"sel":""}" data-id="${esc(t.id)}">
+        <span class="t ${du.cls==="late"?"late":""}" title="Día límite">${MON[d.getMonth()]}<b>${d.getDate()}</b></span>
+        <div>${t.priority!=="normal"?`<div style="margin-bottom:3px">${prioBadge(t.priority)}</div>`:""}<div class="ti">${esc(t.title)}</div>
+          <div class="su">${w?"":`<span class="dot" style="background:${wk.color}"></span>`}<span class="mono">${fmtH(t.hours)}</span> · ${short(t.from)} → ${short(t.to)}${t.templateId?` <span class="rep" title="Tarea repetitiva semanal">↻ Semanal</span>`:""}${t.attachments.length?` · 📎 ${t.attachments.length}`:""}</div>
+          <div class="due ${du.cls}">${du.txt}</div></div>
+        <span class="pill ${st[1]}">${st[0]}</span></div>`;
+    }
+  }
+  $("#list").innerHTML=html;
+}
+
+/* ================= RENDER: carga ================= */
+function renderLoad(){
+  const cap=periodCapacity(), mh=meetingHoursInPeriod();
+  const wds=workdays(S.from,S.to);
+  $("#loadSub").textContent = `${wds} días laborables · ${cap} h disponibles por persona (${DAY_HOURS} h/día, ${WEEK_HOURS} h/semana)`;
+  const ws = S.worker==="all" ? WORKERS : [wById(S.worker)];
+  let html="";
+  for(const w of ws){
+    const ts = tasksInPeriod().filter(t=>t.worker===w.id).sort((a,b)=>a.to.localeCompare(b.to));
+    const parts = ts.map(t=>({t,h:hoursInPeriod(t)}));
+    const used = parts.reduce((s,p)=>s+p.h,0)+mh;
+    const scale = Math.max(cap, used);
+    let segs = mh ? `<div class="seg meet ${S.sel&&S.sel.startsWith("meet-")?"sel":""}" style="width:${mh/scale*100}%" data-id="meet-${meetingsInPeriod()[0]}" title="Reunión semanal · ${fmtH(mh)}">${mh/scale>.06?"Reunión":""}</div>` : "";
+    segs += parts.map(p=>`<div class="seg ${p.t.status==="hecha"?"hecha":""} ${S.sel===p.t.id?"sel":""}" data-id="${esc(p.t.id)}" style="width:${p.h/scale*100}%;background:${w.color}" title="${esc(p.t.title)} · ${fmtH(p.h)} en este periodo">${p.h/scale>.12?esc(p.t.title):""}</div>`).join("");
+    const free=cap-used, pc=used/cap*100;
+    html += `<div class="lw">
+      <div class="nm"><span class="avatar" style="background:${w.color}">${w.short}</span>${esc(w.name)}</div>
+      <div class="stack">${segs}${used>cap?`<span class="over" title="Sobrecarga"></span>`:""}</div>
+      <div class="tot"><b>${fmtN(pc)} %</b> · <span class="mono">${fmtH(used)}</span><br>${free>=0?`<span class="free">${fmtH(free)} libres</span>`:`<span class="ovr">${fmtH(-free)} de más</span>`}</div>
+    </div>`;
+  }
+  html += `<div class="load-foot hint"><span>Las tareas de varias semanas se reparten por igual entre sus días laborables.</span><span>Cada marca gris = 5 h.</span></div>`;
+  $("#load").innerHTML=html;
+}
+
+/* ================= RENDER: gantt ================= */
+function renderGantt(){
+  const days=rangeDays(S.from,S.to), n=days.length, T=todayS();
+  const mDay=Number(S.cfg.meetingDay);
+  const g=$("#gantt");
+  const adm = S.role==="admin" && !!S.db;
+  g.classList.toggle("editable", adm);
+  $("#ganttSub").textContent = "Cada barra va del día de inicio al día límite. El trabajador reparte las horas como quiera dentro del plazo." + (adm ? " Arrastra una barra para moverla o sus bordes para cambiar el plazo." : "");
+  const colW = n>14?54:n>7?80:110;
+  g.style.gridTemplateColumns = `170px repeat(${n}, minmax(${colW}px,1fr))`;
+  let html = `<div class="g-hc" style="position:sticky;left:0;z-index:3"></div>`;
+  for(const d of days){
+    const dt=parse(d);
+    html += `<div class="g-hc ${d===T?"today":""} ${isWE(d)?"we":""}"><div class="dn">${DOW[dt.getDay()]}</div><div class="dd">${dt.getDate()}</div>${dt.getDay()===mDay?`<div class="mt" title="${esc(meetTime(d,false))}">Reunión ${esc(meetTime(d,true).split(" · ")[0])}</div>`:""}</div>`;
+  }
+  const bg = `<div class="g-bg" style="grid-template-columns:repeat(${n},1fr)">${days.map(d=>`<div class="${isWE(d)?"we":""} ${parse(d).getDay()===mDay?"meetday":""}"></div>`).join("")}</div>`;
+  const ws = S.worker==="all" ? WORKERS : [wById(S.worker)];
+  const vis = visibleTasks();
+  let any=false;
+  for(const w of ws){
+    const ts = vis.filter(t=>t.worker===w.id).sort((a,b)=>prioRank(a.priority)-prioRank(b.priority)||a.from.localeCompare(b.from)||a.to.localeCompare(b.to));
+    if(S.worker==="all") html += `<div class="g-wk"><span class="dot" style="background:${w.color}"></span>${esc(w.name)} <span style="color:var(--mute)">· ${ts.length} tarea${ts.length===1?"":"s"}</span></div>`;
+    if(!ts.length){ html += `<div class="g-lbl" style="color:var(--mute);font-weight:400">Sin tareas</div><div class="g-lane" style="grid-column:span ${n}">${bg}</div>`; continue; }
+    any=true;
+    for(const t of ts){
+      const o=overlap(t); const i0=daysBetween(S.from,o[0]), i1=daysBetween(S.from,o[1]);
+      const left=i0/n*100, width=(i1-i0+1)/n*100;
+      const cl=t.from<S.from, cr=t.to>S.to;
+      const st=t.status;
+      html += `<div class="g-lbl" title="${esc(t.title)}"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(t.title)}</span></div>
+        <div class="g-lane" style="grid-column:span ${n}">${bg}
+          <div class="bar ${cl?"cl":""} ${cr?"cr":""} ${st==="hecha"?"hecha":""} ${st==="bloq"?"bloq":""} prio-${esc(t.priority)} ${S.sel===t.id?"sel":""}" data-id="${esc(t.id)}"
+            style="left:calc(${left}% + 3px);width:calc(${width}% - 6px);background:color-mix(in srgb, ${w.color} 15%, white);border-left-color:${w.color}"
+            title="${esc(t.title)} · ${PRIO[t.priority]?PRIO[t.priority][0]:"Normal"} · ${fmtH(t.hours)} · ${short(t.from)} → ${short(t.to)}">
+            ${t.priority==="alta"?`<span class="pm">!</span>`:""}<span class="h">${fmtH(t.hours)}</span><b>${esc(t.title)}</b>
+            ${adm?`<span class="hd l" data-h="l"></span><span class="hd r" data-h="r"></span>`:""}</div></div>`;
+    }
+  }
+  const ti=days.indexOf(T);
+  if(ti>=0) html += `<div class="today-line" style="left:calc(170px + (100% - 170px) * ${(ti+0.5)/n})"></div>`;
+  g.innerHTML=html;
+}
+
+/* ================= RENDER: detail ================= */
+function meetingItem(id){ const d=id.slice(5); return {id, meeting:true, title:"Reunión semanal", from:d, to:d, hours:Number(S.cfg.meetingHours)||1, worker:"all", status:"meet", description:S.cfg.meetingNote||"Reunión semanal de todo el equipo.", attachments:[]}; }
+function findItem(id){ if(!id) return null; if(id.startsWith("meet-")) return meetingItem(id); return S.tasks.find(t=>t.id===id); }
+const attUrl = a => a.url || ("/_blob/"+a.id);
+const attIcon = a => { const n=(a.name||"").split(".").pop().toUpperCase(); return n.length<=4?n:"FILE"; };
+function renderDetail(){
+  const box=$("#detail"), t=findItem(S.sel);
+  if(!t){ box.innerHTML=`<div class="detail-empty">Elige una tarea para ver su descripción, horas y adjuntos.</div>`; return; }
+  const adm=S.role==="admin";
+  if(t.meeting){ renderMeetingDetail(box,t,adm); return; }
+  const w=wById(t.worker), st=STATUS[t.status]||STATUS.pend, du=dueInfo(t);
+  const wd=workdays(t.from,t.to), wk=weeklyHours(t), p=wk/WEEK_HOURS*100, pace=dailyPace(t), inP=hoursInPeriod(t);
+  const total=Math.max(1,daysBetween(t.from,t.to)+1), passed=Math.min(total,Math.max(0,daysBetween(t.from,todayS())+1));
+  const tp = passed/total*100;
+  const isImg=a=>/^image\//.test(a.contentType||""), isVid=a=>/^video\//.test(a.contentType||"");
+  box.innerHTML=`<div class="det">
+    <div class="det-top">
+      <div><span class="pill ${st[1]}">${st[0]}</span><h3>${esc(t.title)}</h3></div>
+      <div class="det-actions">${adm?`<button class="btn" id="dEdit">Editar</button><button class="btn" id="dDup">Duplicar</button>`:""}</div>
+    </div>
+    <div class="meta">
+      <div><small>Trabajador</small><b style="display:flex;align-items:center;gap:7px"><span class="dot" style="background:${w.color}"></span>${esc(w.name)}</b></div>
+      <div><small>Prioridad</small><b>${t.priority==="normal"?"Normal":prioBadge(t.priority)}</b></div>
+      <div><small>Plazo</small><b>${short(t.from)} → ${short(t.to)}</b></div>
+      <div><small>Horas totales</small><b class="mono">${fmtH(t.hours)}</b></div>
+      <div><small>Días laborables</small><b class="mono">${wd}</b></div>
+    </div>
+    ${t.meetingDate?`<div class="hint" style="margin:-8px 0 16px">Acordada en la reunión semanal del ${esc(nice(t.meetingDate))}.</div>`:""}
+    <div class="kpis">
+      <div class="pct"><div class="big">${fmtN(p)} %</div>
+        <div><p>de las <b>${WEEK_HOURS} h semanales</b> de ${esc(w.name)} (${fmtH(wk)} por semana${wd>5?" de media":""}). Ritmo orientativo: <b class="mono">${fmtH(pace)}/día</b>.</p>
+        <div class="pbar"><i style="width:${Math.min(100,p)}%;background:${w.color}"></i></div></div></div>
+      <div class="timebox"><div class="big ${""}" style="color:${du.cls==="late"?"var(--bad)":du.cls==="soon"?"var(--warn)":"var(--ink)"}">${esc(du.txt)}</div>
+        <p>Día límite: ${esc(nice(t.to))}. Plazo transcurrido: ${Math.round(tp)} %. En las fechas filtradas: <span class="mono">${fmtH(inP)}</span>.</p>
+        <div class="pbar"><i style="width:${tp}%;background:${du.cls==="late"?"var(--bad)":"var(--mute)"}"></i></div></div>
+    </div>
+    <div class="sec-t">Descripción</div>
+    <div class="desc">${t.description?esc(t.description):'<span style="color:var(--mute)">Sin descripción.</span>'}</div>
+    <div class="sec-t">Adjuntos ${t.attachments.length?`<span class="mono" style="font-size:14px;color:var(--mute)">(${t.attachments.length})</span>`:""}</div>
+    ${t.attachments.length?`<div class="atts">${t.attachments.map(a=>`<a class="att" href="${esc(attUrl(a))}" target="_blank" rel="noopener">
+      <div class="pv">${isImg(a)?`<img src="${esc(attUrl(a))}" alt="">`:isVid(a)?`<video src="${esc(attUrl(a))}" muted></video>`:esc(attIcon(a))}</div>
+      <div class="nm" title="${esc(a.name)}">${esc(a.name)}</div></a>`).join("")}</div>`:`<div class="hint">Sin archivos adjuntos.</div>`}
+  </div>`;
+  if(adm){ $("#dEdit").onclick=()=>openEditor(t); $("#dDup").onclick=()=>openEditor({...t,id:null,title:t.title+" (copia)"}); }
+}
+
+/* ---- reunión: acta y acuerdos ---- */
+const acuerdoLines = txt => String(txt||"").split(/\n+/).map(l=>l.replace(/^\s*([-•*·]|\d+[.)])\s*/,"").trim()).filter(l=>l.length>2);
+function renderMeetingDetail(box,t,adm){
+  const date=t.from, saved=(S.meetings[date]||{}).notes||"";
+  const draft = S.actaDraft[date]!==undefined ? S.actaDraft[date] : saved;
+  const dirty = draft!==saved;
+  const prevFocus = document.activeElement && document.activeElement.id==="actaTxt" ? [document.activeElement.selectionStart, document.activeElement.selectionEnd] : null;
+  const created = S.tasks.filter(x=>x.meetingDate===date);
+  const lines = acuerdoLines(saved);
+  const upd = (S.meetings[date]||{}).updatedAt;
+  box.innerHTML=`<div class="det"><div class="det-top"><div><span class="pill st-meet">Reunión</span><h3>Reunión semanal</h3></div>
+      <div class="det-actions">${adm?`<button class="btn" id="dMeet">Cambiar día u hora</button>`:""}</div></div>
+    <div class="meta"><div><small>Quién</small><b>Todo el equipo</b></div><div><small>Día</small><b>${esc(nice(date))}</b></div><div><small>Hora</small><b>${esc(meetTime(date,false))}</b></div><div><small>Duración</small><b class="mono">${fmtH(t.hours)}</b> <span class="hint">· ${fmtN(t.hours/WEEK_HOURS*100)} % de 40 h</span></div></div>
+    ${S.cfg.meetingNote?`<div class="hint" style="margin:-8px 0 18px">${esc(S.cfg.meetingNote)}</div>`:""}
+    <div class="sec-t">Acta de la reunión</div>
+    ${adm ? `<div class="acta">
+        <textarea id="actaTxt" placeholder="Escribe o dicta los acuerdos, uno por línea.&#10;- Fernando termina la batería L26-0030 antes del jueves&#10;- Jaime revisa presupuestos pendientes">${esc(draft)}</textarea>
+        <div class="acta-tools">
+          <button type="button" class="btn mic" id="actaMic" data-target="actaTxt" data-hint="actaHint">● Dictar</button>
+          ${S.sample?`<button type="button" class="btn ai" id="actaAi" title="Claude convierte las notas en acuerdos con responsable y fecha">✨ Ordenar acta</button>`:""}
+          ${S.actaOrig[date]!==undefined?`<button type="button" class="btn ghost" id="actaUndo">↺ Volver al original</button>`:""}
+          <button type="button" class="btn primary" id="actaSave" ${dirty?"":"disabled"}>Guardar acta</button>
+          <span class="hint" id="actaState">${dirty?"Cambios sin guardar":upd?"Guardada "+new Date(upd).toLocaleString("es-ES",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}):""}</span>
+          <span class="partial" id="actaPartial"></span>
+        </div>
+        <div class="hint" id="actaHint">Cada línea del acta es un acuerdo; al guardar podrás convertir cada uno en tarea.</div>
+      </div>`
+      : `<div class="desc">${saved?esc(saved):'<span style="color:var(--mute)">Todavía no hay acta de esta reunión.</span>'}</div>`}
+    ${adm && lines.length ? `<div class="sec-t">Acuerdos → tareas</div><div class="acu" style="margin-bottom:22px">${lines.map((l,i)=>{
+        const done=created.some(x=>x.title.trim().toLowerCase()===l.toLowerCase());
+        return `<div class="acu-row ${done?"done":""}"><span>${esc(l)}</span>${done?`<span class="hint" style="flex:none">✓ Tarea creada</span>`:`<button class="btn" data-acu="${i}">→ Crear tarea</button>`}</div>`; }).join("")}</div>` : ""}
+    <div class="sec-t">Tareas acordadas en esta reunión ${created.length?`<span class="mono" style="font-size:14px;color:var(--mute)">(${created.length})</span>`:""}</div>
+    ${created.length?`<div class="mt-tasks">${created.map(x=>{ const w=wById(x.worker); return `<div class="mt-task" data-go="${esc(x.id)}"><span class="dot" style="background:${w.color}"></span><b style="flex:1">${esc(x.title)}</b>${prioBadge(x.priority)}<span class="hint">${esc(w.name)} · ${fmtH(x.hours)} · hasta ${short(x.to)}</span></div>`; }).join("")}</div>`:`<div class="hint" style="margin-bottom:10px">Ninguna todavía.</div>`}
+  </div>`;
+  if(!adm) return;
+  $("#dMeet").onclick=openSettings;
+  const ta=$("#actaTxt");
+  if(prevFocus){ ta.focus(); try{ ta.setSelectionRange(prevFocus[0],prevFocus[1]); }catch(_){} }
+  ta.oninput=()=>{ S.actaDraft[date]=ta.value; const d=ta.value!==((S.meetings[date]||{}).notes||""); $("#actaSave").disabled=!d; $("#actaState").textContent=d?"Cambios sin guardar":""; };
+  $("#actaMic").onclick=micClick;
+  if($("#actaAi")) $("#actaAi").onclick=()=>aiActa(date);
+  if($("#actaUndo")) $("#actaUndo").onclick=()=>{ S.actaDraft[date]=S.actaOrig[date]; delete S.actaOrig[date]; renderDetail(); };
+  if(S.dict && S.dict.active() && S.dictTargetId==="actaTxt"){ S.dictBtn=$("#actaMic"); }
+  updMic(S.dict&&S.dict.active()?"listening":"idle");
+  $("#actaSave").onclick=async ()=>{
+    if(!S.db) return;
+    if(S.dict && S.dict.active() && S.dictTargetId==="actaTxt") await stopDict();
+    const notes=(S.actaDraft[date]!==undefined?S.actaDraft[date]:ta.value);
+    $("#actaSave").disabled=true;
+    try{ await S.db.doc("meetings/"+date).set({date, notes, updatedAt:new Date().toISOString()}); delete S.actaDraft[date]; toast("Acta guardada"); renderDetail(); }
+    catch(e){ $("#actaSave").disabled=false; toast(e&&e.code==="invalid_argument"?"Tu cuenta no tiene permiso para guardar el acta.":"No se pudo guardar el acta."); }
+  };
+  box.querySelectorAll("[data-acu]").forEach(b=>b.onclick=()=>{
+    let l=lines[Number(b.dataset.acu)];
+    const T=todayS(), from = T>date?T:date;
+    let to=null; const mh=l.match(/\s*\(hasta (\d{1,2}) (ene|feb|mar|abr|may|jun|jul|ago|sep|oct|nov|dic)\)\s*$/i);
+    if(mh){ const mi=MON.indexOf(mh[2].toLowerCase()); let y=parse(date).getFullYear(); let dt=new Date(y,mi,Number(mh[1])); if(ymd(dt)<date) dt=new Date(y+1,mi,Number(mh[1])); to=ymd(dt); l=l.slice(0,mh.index).trim(); }
+    const lower=l.toLowerCase(), who = WORKERS.slice().sort((a,b)=>b.name.length-a.name.length).find(w=>lower.includes(w.name.toLowerCase()) || lower.includes(w.name.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"")));
+    const title = who ? l.replace(new RegExp("^"+who.name.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+"\\s*[—:-]\\s*","i"),"") : l;
+    openEditor({id:null, title: title.charAt(0).toUpperCase()+title.slice(1), worker: who?who.id:(S.worker!=="all"?S.worker:"angel"), priority:"normal", status:"pend",
+      from, to: to && to>=from ? to : ymd(addDays(parse(from),4)), hours:2, description:`Acordado en la reunión semanal del ${nice(date)}.`, attachments:[], meetingDate:date});
+  });
+  box.querySelectorAll("[data-go]").forEach(r=>r.onclick=()=>select(r.dataset.go));
+}
+
+function renderAll(){ renderTabs(); renderWho(); renderList(); renderLoad(); renderGantt(); renderDetail(); }
+function renderData(){ renderList(); renderLoad(); renderGantt(); renderDetail(); }
+
+/* ================= RANGE ================= */
+function setWeek(d){ const m=monday(d); S.from=ymd(m); S.to=ymd(addDays(m,4)); syncRange(); }
+function syncRange(){ $("#from").value=S.from; $("#to").value=S.to; store.set("tl-range",{from:S.from,to:S.to}); renderAll(); }
+function shift(dir){ const span=daysBetween(S.from,S.to)+1, step=span<=7?7:span; S.from=ymd(addDays(parse(S.from),dir*step)); S.to=ymd(addDays(parse(S.to),dir*step)); syncRange(); }
+$("#prev").onclick=()=>shift(-1); $("#next").onclick=()=>shift(1); $("#today").onclick=()=>setWeek(new Date());
+$("#from").onchange=e=>{ if(!e.target.value) return; S.from=e.target.value; if(S.to<S.from) S.to=ymd(addDays(parse(S.from),4)); syncRange(); };
+$("#to").onchange=e=>{ if(!e.target.value) return; S.to=e.target.value; if(S.to<S.from) S.from=S.to; syncRange(); };
+
+/* ================= INTERACTION ================= */
+$("#workerTabs").onclick=e=>{ const b=e.target.closest("button[data-w]"); if(!b || S.role==="worker") return; S.worker=b.dataset.w; const t=findItem(S.sel); if(t&&!t.meeting&&S.worker!=="all"&&t.worker!==S.worker) S.sel=null; renderAll(); };
+function select(id){ S.sel = S.sel===id?null:id; renderData(); if(S.sel && window.innerWidth<1050) $("#detail").scrollIntoView({behavior:"smooth"}); }
+$("#list").onclick=e=>{ const r=e.target.closest(".row"); if(r) select(r.dataset.id); };
+$("#gantt").onclick=e=>{ if($("#gantt").classList.contains("editable")) return; const r=e.target.closest(".bar"); if(r) select(r.dataset.id); };
+
+/* ---- arrastrar barras del diagrama de plazos (solo administrador) ---- */
+function dragRange(d){
+  const t=d.t, k=d.dd;
+  if(d.mode==="m") return [ymd(addDays(parse(t.from),k)), ymd(addDays(parse(t.to),k))];
+  if(d.mode==="l"){ const f=ymd(addDays(parse(t.from),k)); return [f>t.to?t.to:f, t.to]; }
+  const to=ymd(addDays(parse(t.to),k)); return [t.from, to<t.from?t.from:to];
+}
+$("#gantt").addEventListener("pointerdown",e=>{
+  const g=$("#gantt"); if(!g.classList.contains("editable") || e.button!==0) return;
+  const bar=e.target.closest(".bar"); if(!bar) return;
+  const t=S.tasks.find(x=>x.id===bar.dataset.id); if(!t) return;
+  const n=daysBetween(S.from,S.to)+1;
+  const h=e.target.dataset && e.target.dataset.h;
+  S.drag={id:t.id, mode:h==="l"?"l":h==="r"?"r":"m", x0:e.clientX, colW:bar.parentElement.getBoundingClientRect().width/n, t:{...t}, bar, w0:bar.getBoundingClientRect().width, moved:false, dd:0};
+  try{ bar.setPointerCapture(e.pointerId); }catch(_){}
+  e.preventDefault();
+});
+$("#gantt").addEventListener("pointermove",e=>{
+  const d=S.drag; if(!d) return;
+  const dx=e.clientX-d.x0; if(Math.abs(dx)>4 && !d.moved){ d.moved=true; d.bar.classList.add("dragging"); }
+  if(!d.moved) return;
+  d.dd=Math.round(dx/d.colW);
+  const px=d.dd*d.colW;
+  if(d.mode==="m"){ d.bar.style.transform=`translateX(${px}px)`; }
+  else if(d.mode==="r"){ d.bar.style.width=Math.max(d.colW-6,d.w0+px)+"px"; }
+  else { const nw=Math.max(d.colW-6,d.w0-px); d.bar.style.transform=`translateX(${d.w0-nw}px)`; d.bar.style.width=nw+"px"; }
+  const [f,to]=dragRange(d);
+  let tip=$("#dragTip"); if(!tip){ tip=document.createElement("div"); tip.id="dragTip"; tip.className="drag-tip"; document.body.appendChild(tip); }
+  tip.textContent=`${short(f)} → ${short(to)} · ${workdays(f,to)} días lab.`;
+  tip.style.left=(e.clientX+14)+"px"; tip.style.top=(e.clientY+14)+"px";
+});
+async function endDrag(e, cancel){
+  const d=S.drag; if(!d) return; S.drag=null;
+  const tip=$("#dragTip"); if(tip) tip.remove();
+  if(!d.moved){ if(!cancel) select(d.id); return; }
+  if(cancel || d.dd===0){ renderGantt(); return; }
+  const [f,to]=dragRange(d);
+  const t=S.tasks.find(x=>x.id===d.id); if(t){ t.from=f; t.to=to; }
+  renderData();
+  try{ await S.db.collection("tasks").doc(d.id).update({dateFrom:f, dateTo:to, updatedAt:new Date().toISOString()}); toast(`Plazo cambiado: ${short(f)} → ${short(to)}`); }
+  catch(err){ if(t){ t.from=d.t.from; t.to=d.t.to; } renderData(); toast(err&&err.code==="invalid_argument"?"Tu cuenta no tiene permiso para cambiar tareas.":"No se pudo guardar el cambio."); }
+}
+$("#gantt").addEventListener("pointerup",e=>endDrag(e,false));
+$("#gantt").addEventListener("pointercancel",e=>endDrag(e,true));
+$("#load").onclick=e=>{ const r=e.target.closest(".seg"); if(r&&r.dataset.id) select(r.dataset.id); };
+$("#q").oninput=e=>{ S.q=e.target.value; renderList(); renderGantt(); };
+document.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>closeModals());
+function closeModals(){ stopDict(); $("#editOv").classList.add("hidden"); $("#setOv").classList.add("hidden"); }
+document.addEventListener("keydown",e=>{ if(e.key==="Escape") closeModals(); });
+
+/* ================= IA: ordenar lo dictado ================= */
+let aiCtl=null;
+function aiAbort(){ if(aiCtl){ try{ aiCtl.abort(); }catch(_){} aiCtl=null; } }
+function aiErr(e){
+  const c=e&&e.code;
+  if(c==="not_granted"||c==="sampling_disabled"||c==="not_declared"||c==="capability_disabled"||c==="capability_removed"){ S.sample=null; $("#aiBtn").classList.add("hidden"); return "La IA no está disponible para esta cuenta o no se dio permiso."; }
+  if(c==="rate_limited") return "Has usado mucho la IA en poco tiempo; prueba en un rato.";
+  if(c==="session_expired") return "Tu sesión de Claude ha caducado; vuelve a iniciarla.";
+  if(c==="cancelled") return "";
+  if(c==="refused") return "Claude no ha podido procesar este texto.";
+  return "No se pudo ordenar el texto. Inténtalo de nuevo.";
+}
+const isoOrNull = v => (typeof v==="string" && /^\d{4}-\d{2}-\d{2}$/.test(v)) ? v : null;
+$("#aiBtn").onclick=async ()=>{
+  if(!S.sample) return;
+  const btn=$("#aiBtn"), ta=$("#eDesc");
+  if(aiCtl){ aiAbort(); return; }
+  const text=ta.value.trim();
+  if(text.length<15){ $("#micHint").textContent="Escribe o dicta primero la explicación de la tarea; después pulsa «Ordenar con IA»."; return; }
+  if(S.dict && S.dict.active()) await stopDict();
+  const T=todayS(), w=wById($("#eWorker").value);
+  const prompt = `Eres el asistente de Volta Baterías, una empresa que repara baterías de litio y vende baterías. El responsable ha dictado (hablando) una instrucción para un trabajador. Reescríbela como una descripción de tarea clara, en español de España.
+
+Reglas:
+- No inventes nada que no se diga. Si algo no se menciona, no lo añadas.
+- Conserva TODOS los datos concretos: referencias de encargo, modelos, marcas, cantidades, ubicaciones, nombres de clientes.
+- Quita muletillas, repeticiones y rodeos. Frases cortas, en infinitivo o dirigidas al trabajador.
+- Las advertencias de seguridad o de cuidado van siempre en "Precauciones".
+
+Formato del campo "descripcion" (texto plano, sin markdown ni asteriscos; omite cualquier sección sin contenido):
+Objetivo: una frase.
+
+Pasos:
+1. ...
+2. ...
+
+Material: ...
+
+Precauciones: ...
+
+Devuelve SOLO un objeto JSON con esta forma:
+{"titulo": "título corto, máximo 60 caracteres", "descripcion": "texto con el formato anterior", "dia_limite": "AAAA-MM-DD" o null si no se menciona ningún plazo, "horas": número de horas o null si no se mencionan}
+
+Hoy es ${nice(T)} (${T}). Para plazos relativos ("el jueves", "la semana que viene") usa la primera fecha que encaje a partir de hoy.
+Trabajador asignado: ${w.name}. Título actual de la tarea: ${$("#eTitle").value.trim()||"(vacío)"}.
+
+Texto dictado:
+"""
+${text.slice(0,12000)}
+"""`;
+  aiCtl=new AbortController();
+  btn.classList.add("busy"); btn.textContent="■ Ordenando… (parar)";
+  $("#micHint").textContent="Claude está ordenando el texto…";
+  try{
+    const r = await S.sample.json(prompt,{signal:aiCtl.signal});
+    const desc = r && typeof r.descripcion==="string" ? r.descripcion.trim() : "";
+    if(!desc) throw {code:"empty_completion"};
+    if(S.edit.origDesc==null) S.edit.origDesc=ta.value;
+    ta.value=desc;
+    $("#micHint").textContent="";
+    const sug=[];
+    const tit = typeof r.titulo==="string" ? r.titulo.trim().slice(0,140) : "";
+    if(tit && tit!==$("#eTitle").value.trim()) sug.push(`<button type="button" class="btn" data-ai="titulo">Usar título: «${esc(tit)}»</button>`);
+    const dl = isoOrNull(r.dia_limite);
+    if(dl && dl!==$("#eTo").value) sug.push(`<button type="button" class="btn" data-ai="dia">Día límite: ${esc(nice(dl))}</button>`);
+    const hr = Number(r.horas);
+    if(hr>0 && hr<=400 && hr!==Number($("#eHours").value)) sug.push(`<button type="button" class="btn" data-ai="horas">Horas: ${esc(fmtH(hr))}</button>`);
+    const bar=$("#aiBar");
+    bar.innerHTML = `<span>✨ Ordenado por Claude. Revísalo antes de guardar.</span>${sug.length?`<span>Sugerencias:</span>${sug.join("")}`:""}<button type="button" class="btn ghost" data-ai="undo">↺ Volver al original</button>`;
+    bar.classList.remove("hidden");
+    bar.onclick=e=>{
+      const b=e.target.closest("[data-ai]"); if(!b) return;
+      const k=b.dataset.ai;
+      if(k==="titulo"){ $("#eTitle").value=tit; b.remove(); }
+      if(k==="dia"){ if($("#eFrom").value>dl) $("#eFrom").value=todayS()<=dl?todayS():dl; $("#eTo").value=dl; updCalc(); b.remove(); }
+      if(k==="horas"){ $("#eHours").value=hr; updCalc(); b.remove(); }
+      if(k==="undo"){ if(S.edit.origDesc!=null) ta.value=S.edit.origDesc; S.edit.origDesc=null; bar.classList.add("hidden"); }
+    };
+  }catch(e){ $("#micHint").textContent=aiErr(e); }
+  finally{ aiCtl=null; btn.classList.remove("busy"); btn.textContent="✨ Ordenar con IA"; }
+};
+async function aiActa(date){
+  if(!S.sample) return;
+  const btn=$("#actaAi"); if(!btn) return;
+  if(aiCtl){ aiAbort(); return; }
+  const ta=$("#actaTxt"), text=(ta?ta.value:"").trim();
+  if(text.length<15){ $("#actaHint").textContent="Escribe o dicta primero las notas de la reunión."; return; }
+  if(S.dict && S.dict.active()) await stopDict();
+  const names = WORKERS.map(w=>w.name).join(", ");
+  const prompt = `Eres el asistente de Volta Baterías (reparación y venta de baterías). Estas son las notas, dictadas, de la reunión semanal del ${nice(date)} (${date}). Conviértelas en una lista de acuerdos.
+
+Personas del equipo: ${names}. Ojo: "Fernando" y "Fernando Molleja" son dos personas distintas; si solo se dice "Fernando" es "Fernando".
+Reglas:
+- Un acuerdo por cada cosa que alguien tiene que hacer. No inventes acuerdos, responsables ni fechas.
+- Redacción corta, empezando por un verbo en infinitivo. Conserva los datos concretos (referencias, modelos, cantidades).
+- "responsable": exactamente uno de los nombres de la lista, o null si no queda claro.
+- "fecha": AAAA-MM-DD si se dice un plazo (relativo a la fecha de la reunión), o null.
+
+Devuelve SOLO un array JSON: [{"responsable": "Ángel" o null, "acuerdo": "texto", "fecha": "AAAA-MM-DD" o null}]
+
+Notas:
+"""
+${text.slice(0,12000)}
+"""`;
+  aiCtl=new AbortController();
+  btn.classList.add("busy"); btn.textContent="■ Ordenando… (parar)";
+  $("#actaHint").textContent="Claude está ordenando el acta…";
+  try{
+    const arr = await S.sample.json(prompt,{signal:aiCtl.signal});
+    if(!Array.isArray(arr) || !arr.length) throw {code:"empty_completion"};
+    const lines = arr.map(a=>{
+      const resp = WORKERS.find(w=>w.name===a.responsable);
+      const f = isoOrNull(a.fecha);
+      const txt = String(a.acuerdo||"").trim(); if(!txt) return null;
+      return `- ${resp?resp.name+" — ":""}${txt}${f?` (hasta ${short(f)})`:""}`;
+    }).filter(Boolean);
+    if(!lines.length) throw {code:"empty_completion"};
+    if(S.actaOrig[date]===undefined) S.actaOrig[date]=ta.value;
+    S.actaDraft[date]=lines.join("\n");
+    aiCtl=null; renderDetail();
+    const h=$("#actaHint"); if(h) h.textContent="✨ Ordenada por Claude. Revísala y pulsa «Guardar acta»; luego crea las tareas desde cada acuerdo.";
+  }catch(e){ const h=$("#actaHint"); if(h) h.textContent=aiErr(e); }
+  finally{ aiCtl=null; const b=$("#actaAi"); if(b){ b.classList.remove("busy"); b.textContent="✨ Ordenar acta"; } }
+}
+
+/* ================= ACCESO CON CÓDIGO =================
+   Cada persona entra con su código de 6 dígitos; el del administrador ve todo y crea tareas. */
+const ROLES = [{id:"admin", name:"Administrador", short:"A", color:"var(--accent)"}, ...WORKERS];
+const codeHash = c => sha("volta:"+c);
+const boxes = [...document.querySelectorAll("#codeBoxes input")];
+const codeVal = () => boxes.map(b=>b.value).join("");
+let fails=0, lockUntil=0;
+boxes.forEach((b,i)=>{
+  b.addEventListener("input",()=>{
+    const d=b.value.replace(/\D/g,""); 
+    if(d.length>1){ d.split("").slice(0,6-i).forEach((ch,k)=>{ boxes[i+k].value=ch; }); boxes[Math.min(5,i+d.length-1)].focus(); }
+    else { b.value=d; if(d && i<5) boxes[i+1].focus(); }
+    if(codeVal().length===6) tryCode();
+  });
+  b.addEventListener("keydown",e=>{ if(e.key==="Backspace" && !b.value && i>0){ boxes[i-1].focus(); boxes[i-1].value=""; e.preventDefault(); } });
+  b.addEventListener("paste",e=>{ const t=(e.clipboardData||window.clipboardData).getData("text").replace(/\D/g,"").slice(0,6); if(!t) return; e.preventDefault(); boxes.forEach((x,k)=>x.value=t[k]||""); boxes[Math.min(5,t.length)].focus(); if(t.length===6) tryCode(); });
+});
+$("#codeForm").onsubmit=e=>{ e.preventDefault(); tryCode(); };
+function clearCode(){ boxes.forEach(b=>b.value=""); boxes[0].focus(); }
+async function tryCode(){
+  const c=codeVal();
+  if(Date.now()<lockUntil){ $("#admErr").textContent=`Demasiados intentos. Espera ${Math.ceil((lockUntil-Date.now())/1000)} s.`; return; }
+  if(!/^\d{6}$/.test(c)){ $("#admErr").textContent="El código tiene 6 dígitos."; return; }
+  $("#admErr").textContent="Comprobando…";
+  boxes.forEach(b=>b.disabled=true);
+  let r=null, err=null;
+  try{ r=await VoltaAPI.login(c); }catch(e){ err=e; }
+  boxes.forEach(b=>b.disabled=false);
+  if(r){ fails=0; $("#admErr").textContent=""; clearCode(); r.role==="admin"?login("admin"):login("worker",r.who); return; }
+  fails++; if(fails>=5){ lockUntil=Date.now()+30000; fails=0; }
+  $("#admErr").textContent = (err&&err.message) || "Código incorrecto.";
+  $("#codeBoxes").classList.remove("shake"); void $("#codeBoxes").offsetWidth; $("#codeBoxes").classList.add("shake");
+  clearCode();
+}
+function login(role,who){ S.role=role; S.me=who||null; S.worker=role==="worker"?who:"all"; S.sel=null; store.set("tl-session",{role,who}); $("#loginOv").classList.add("hidden"); renderAll(); }
+$("#logout").onclick=()=>{ VoltaAPI.logout(); store.del("tl-session"); S.role=null; S.me=null; S.sel=null; $("#loginOv").classList.remove("hidden"); setTimeout(()=>boxes[0].focus(),30); };
+
+/* ================= EDITOR ================= */
+$("#eWorker").innerHTML = WORKERS.map(w=>`<option value="${w.id}">${esc(w.name)}</option>`).join("");
+$("#newTask").onclick=()=>openEditor(null);
+function openEditor(t){
+  const T=todayS(), start = (S.from<=T&&T<=S.to)?T:S.from;
+  const base = t || {id:null,title:"",worker:S.worker!=="all"?S.worker:"angel",priority:"normal",status:"pend",from:start,to:S.to>=start?S.to:start,hours:4,description:"",attachments:[]};
+  S.edit={...base,attachments:[...(base.attachments||[])]};
+  $("#editTitle").textContent = base.id?"Editar tarea":base.meetingDate?"Nueva tarea (acuerdo de reunión)":"Nueva tarea";
+  $("#eTitle").value=base.title; $("#eWorker").value=base.worker; $("#eStatus").value=base.status||"pend"; $("#ePrio").value=base.priority||"normal";
+  $("#eFrom").value=base.from; $("#eTo").value=base.to; $("#eHours").value=base.hours; $("#eDesc").value=base.description||"";
+  $("#delBtn").classList.toggle("hidden",!base.id);
+  $("#editMsg").textContent=""; $("#partial").textContent=""; $("#micHint").textContent="";
+  stopDict(); S.dictBtn=null; updMic("idle");
+  aiAbort(); $("#aiBar").classList.add("hidden"); $("#aiBtn").classList.toggle("hidden", !S.sample); S.edit.origDesc=null;
+  const canUp=!!S.assets;
+  $("#attAddLbl").classList.toggle("hidden",!canUp);
+  $("#attHint").textContent = canUp?"Fotos, vídeos, PDF o documentos (máx. 4 MB por archivo).":"No se pueden subir adjuntos ahora mismo.";
+  setupTplUI(base);
+  renderEditAtts(); updCalc();
+  $("#editOv").classList.remove("hidden"); setTimeout(()=>$("#eTitle").focus(),30);
+}
+/* ---- tareas repetitivas semanales ---- */
+const dow1 = s => (parse(s).getDay()+6)%7 + 1;           // 1 = lunes … 7 = domingo
+function tplWeekDates(tp, refDate){
+  const mon = monday(parse(refDate));
+  const f = addDays(mon, (Number(tp.fromDow)||1)-1);
+  return [ymd(f), ymd(addDays(f, Math.max(0, Math.min(6, Number(tp.spanDays)||0))))];
+}
+function tplLabel(tp){ return `${tp.title} · ${wById(tp.worker).name} · ${fmtH(tp.hours)}`; }
+function existsThisWeek(tp, refDate){
+  const [f,t]=tplWeekDates(tp, refDate);
+  return S.tasks.some(x=>x.templateId===tp.id && x.from<=t && x.to>=f);
+}
+function setupTplUI(base){
+  const isNew=!base.id, row=$("#tplRow");
+  const list=S.templates.slice().sort((a,b)=>wById(a.worker).name.localeCompare(wById(b.worker).name,"es")||a.title.localeCompare(b.title,"es"));
+  row.classList.toggle("hidden", !isNew || !list.length);
+  const ref = S.from;
+  $("#eTpl").innerHTML = `<option value="">— Ninguna: tarea nueva —</option>` + WORKERS.map(w=>{
+    const its=list.filter(t=>t.worker===w.id); if(!its.length) return "";
+    return `<optgroup label="${esc(w.name)}">${its.map(t=>`<option value="${esc(t.id)}">${esc(t.title)} · ${fmtH(t.hours)}${existsThisWeek(t,ref)?" (ya creada esta semana)":""}</option>`).join("")}</optgroup>`;
+  }).join("") + (list.some(t=>!WORKERS.find(w=>w.id===t.worker)) ? list.filter(t=>!WORKERS.find(w=>w.id===t.worker)).map(t=>`<option value="${esc(t.id)}">${esc(tplLabel(t))}</option>`).join("") : "");
+  $("#eTpl").value = base.templateId && isNew ? base.templateId : "";
+  $("#tplDel").classList.add("hidden");
+  $("#tplHint").textContent="Elige una para rellenar la tarea con sus datos y las fechas de esta semana.";
+  $("#eTplSave").checked=false;
+  const hasTpl = !!(base.templateId && S.templates.find(t=>t.id===base.templateId));
+  $("#eTplSaveLbl").textContent = hasTpl ? "Actualizar también la tarea repetitiva con estos datos" : "Guardar como tarea repetitiva semanal";
+}
+$("#eTpl").onchange=()=>{
+  const id=$("#eTpl").value, tp=S.templates.find(t=>t.id===id);
+  $("#tplDel").classList.toggle("hidden", !tp);
+  if(!tp){ S.edit.templateId=null; $("#eTplSaveLbl").textContent="Guardar como tarea repetitiva semanal"; $("#tplHint").textContent="Elige una para rellenar la tarea con sus datos y las fechas de esta semana."; return; }
+  const refDate = S.from;
+  const [f,t]=tplWeekDates(tp, refDate);
+  $("#eTitle").value=tp.title; $("#eWorker").value=tp.worker; $("#ePrio").value=tp.priority||"normal"; $("#eStatus").value="pend";
+  $("#eHours").value=tp.hours; $("#eDesc").value=tp.description||""; $("#eFrom").value=f; $("#eTo").value=t;
+  S.edit.templateId=tp.id; S.edit.attachments=(tp.attachments||[]).map(a=>({...a}));
+  renderEditAtts(); updCalc();
+  $("#eTplSaveLbl").textContent="Actualizar también la tarea repetitiva con estos datos";
+  $("#tplHint").innerHTML = existsThisWeek(tp,refDate) ? `<span style="color:var(--warn);font-weight:600">Ojo: esta tarea ya está creada para la semana del ${short(f)}.</span> Puedes cambiar las fechas si es para otra semana.` : `Rellenada para la semana del ${short(f)}. Puedes cambiar cualquier dato antes de guardar.`;
+};
+let tplDelArm=false;
+$("#tplDel").onclick=async ()=>{
+  const id=$("#eTpl").value; if(!id||!S.db) return;
+  if(!tplDelArm){ tplDelArm=true; $("#tplDel").textContent="¿Seguro? Pulsa otra vez"; setTimeout(()=>{tplDelArm=false;$("#tplDel").textContent="Quitar de la lista";},3000); return; }
+  tplDelArm=false; $("#tplDel").textContent="Quitar de la lista";
+  try{ await S.db.collection("templates").doc(id).delete(); S.templates=S.templates.filter(t=>t.id!==id); S.edit.templateId=null; setupTplUI({id:null}); toast("Quitada de las tareas repetitivas (las tareas ya creadas no se borran)"); }
+  catch(e){ toast("No se pudo quitar."); }
+};
+
+function updCalc(){
+  const f=$("#eFrom").value, to=$("#eTo").value, h=Number($("#eHours").value)||0, w=wById($("#eWorker").value);
+  if(!f||!to||!h){ $("#eCalc").textContent="Indica el plazo y las horas para ver el cálculo."; return; }
+  if(to<f){ $("#eCalc").innerHTML=`<span style="color:var(--bad)">El día límite no puede ser anterior al de inicio.</span>`; return; }
+  const t={from:f,to,hours:h}, wd=workdays(f,to), wk=weeklyHours(t), p=wk/WEEK_HOURS*100;
+  const cap=Math.max(1,wd)*DAY_HOURS;
+  $("#eCalc").innerHTML = `${wd} día${wd===1?"":"s"} laborable${wd===1?"":"s"} · <b>${fmtN(p)} %</b> de las ${WEEK_HOURS} h semanales de ${esc(w.name)} (${fmtH(wk)}/semana${wd>5?" de media":""}) · ritmo orientativo <span class="mono">${fmtH(dailyPace(t))}/día</span>`
+    + (h>cap?`<br><span style="color:var(--bad)">Ojo: ${fmtH(h)} no caben en ${wd} días laborables (${cap} h como máximo).</span>`:"");
+}
+["#eHours","#eWorker","#eFrom","#eTo"].forEach(s=>$(s).addEventListener("input",updCalc));
+function renderEditAtts(){
+  $("#eAtts").innerHTML = S.edit.attachments.map((x,i)=>`<div class="edit-att"><span class="mono" style="color:var(--mute);font-size:12px">${esc(attIcon(x))}</span><span class="n">${esc(x.name)}</span>${x.uploading?`<span class="hint">subiendo…</span>`:`<a class="hint" href="${esc(attUrl(x))}" target="_blank" rel="noopener">ver</a><button type="button" class="btn ghost" data-rm="${i}" title="Quitar">✕</button>`}</div>`).join("");
+}
+$("#eAtts").onclick=e=>{ const b=e.target.closest("[data-rm]"); if(!b) return; S.edit.attachments.splice(Number(b.dataset.rm),1); renderEditAtts(); };
+$("#attInput").onchange=async e=>{
+  const files=[...e.target.files]; e.target.value="";
+  if(!S.assets||!files.length) return;
+  for(const f of files){
+    if(f.size>4*1024*1024){ toast(`${f.name}: supera 4 MB (límite por archivo)`); continue; }
+    const tmp={name:f.name,uploading:true}; S.edit.attachments.push(tmp); renderEditAtts();
+    try{ const r=await S.assets.upload(f); Object.assign(tmp,{id:r.id,url:r.url,contentType:r.contentType||f.type,size:r.sizeBytes||f.size}); delete tmp.uploading; }
+    catch(err){ S.edit.attachments.splice(S.edit.attachments.indexOf(tmp),1); toast(`No se pudo subir ${f.name}`); }
+    renderEditAtts();
+  }
+};
+$("#saveBtn").onclick=async ()=>{
+  if(!$("#editForm").reportValidity()) return;
+  if($("#eTo").value<$("#eFrom").value){ $("#editMsg").textContent="Revisa las fechas."; return; }
+  if(S.edit.attachments.some(a=>a.uploading)){ $("#editMsg").textContent="Espera a que terminen de subirse los adjuntos."; return; }
+  if(!S.db){ $("#editMsg").textContent="No hay conexión con la base de datos."; return; }
+  await stopDict();
+  const now=new Date().toISOString();
+  const body={ title:$("#eTitle").value.trim(), worker:$("#eWorker").value, status:$("#eStatus").value, priority:$("#ePrio").value,
+    dateFrom:$("#eFrom").value, dateTo:$("#eTo").value, hours:Math.round((Number($("#eHours").value)||0)*100)/100,
+    description:$("#eDesc").value.trim(),
+    attachments:S.edit.attachments.map(a=>({id:a.id,name:a.name,contentType:a.contentType||"",size:a.size||0,url:a.url||""})),
+    createdAt:S.edit.createdAt||now, updatedAt:now };
+  if(S.edit.meetingDate) body.meetingDate=S.edit.meetingDate;
+  let tplRef=null;
+  if($("#eTplSave").checked){
+    const exists = S.edit.templateId && S.templates.find(t=>t.id===S.edit.templateId);
+    tplRef = exists ? S.db.collection("templates").doc(S.edit.templateId) : S.db.collection("templates").doc();
+  } else if(S.edit.templateId) body.templateId = S.edit.templateId;
+  const ref = S.edit.id ? S.db.collection("tasks").doc(S.edit.id) : S.db.collection("tasks").doc();
+  $("#saveBtn").disabled=true; $("#editMsg").textContent="";
+  try{
+    if(tplRef){
+      await tplRef.set({ title:body.title, worker:body.worker, priority:body.priority, hours:body.hours, description:body.description,
+        attachments:body.attachments, fromDow:dow1(body.dateFrom), spanDays:Math.min(6,daysBetween(body.dateFrom,body.dateTo)), updatedAt:now });
+      body.templateId = tplRef.id;
+    }
+    await ref.set(body); closeModals(); toast(tplRef?"Tarea guardada y añadida a las repetitivas":"Tarea guardada");
+    if(!(S.sel&&S.sel.startsWith("meet-")&&body.meetingDate)) S.sel=ref.id;
+    if(body.dateTo<S.from||body.dateFrom>S.to) setWeek(parse(body.dateFrom)); else renderAll();
+  }catch(err){ $("#editMsg").textContent = err&&err.code==="invalid_argument"?"Tu cuenta no tiene permiso para guardar. Ábrelo con la cuenta del propietario o un editor.":"No se pudo guardar. Inténtalo de nuevo."; }
+  finally{ $("#saveBtn").disabled=false; }
+};
+let delArm=false;
+$("#delBtn").onclick=async ()=>{
+  if(!delArm){ delArm=true; $("#delBtn").textContent="¿Seguro? Pulsa otra vez"; setTimeout(()=>{delArm=false;$("#delBtn").textContent="Eliminar";},3000); return; }
+  delArm=false; $("#delBtn").textContent="Eliminar";
+  try{ await S.db.collection("tasks").doc(S.edit.id).delete(); S.sel=null; closeModals(); toast("Tarea eliminada"); renderAll(); }
+  catch(e){ $("#editMsg").textContent="No se pudo eliminar."; }
+};
+
+/* ================= DICTADO =================
+   Un único dictado que escribe en el campo del botón pulsado (descripción de tarea o acta). */
+function updMic(state){
+  document.querySelectorAll(".mic").forEach(b=>{
+    const mine = b===S.dictBtn;
+    const st = mine ? state : "idle";
+    b.classList.toggle("live", st==="listening"||st==="starting"||st==="finishing");
+    b.classList.toggle("off", !S.dict);
+    b.textContent = st==="listening"?"■ Parar dictado":st==="starting"?"… Preparando":st==="finishing"?"… Terminando":"● Dictar";
+  });
+}
+const NO_DICT = "El dictado funciona en Google Chrome o Microsoft Edge. En este navegador no está disponible: escribe a mano.";
+const setHint = (txt) => { const h=S.dictHintId && document.getElementById(S.dictHintId); if(h) h.textContent=txt; };
+function micClick(ev){
+  const btn=ev.currentTarget, d=S.dict;
+  const hintEl=document.getElementById(btn.dataset.hint);
+  if(!d){ if(hintEl) hintEl.textContent = S.dictTried ? NO_DICT : "El dictado aún se está cargando, vuelve a pulsar en un momento."; return; }
+  if(d.active()){ stopDict(); return; }
+  S.dictTargetId=btn.dataset.target; S.dictHintId=btn.dataset.hint; S.dictBtn=btn;
+  if(hintEl) hintEl.textContent="";
+  d.start().catch(err=>{
+    const c=err&&err.code;
+    if(c==="not_granted") setHint("El navegador no deja usar el micrófono. Permítelo (icono del candado en la barra de direcciones, o menú Permisos de la página) y vuelve a pulsar.");
+    else if(c==="unavailable") setHint(NO_DICT);
+    else if(c==="dismissed") setHint("Pulsa «Dictar» de nuevo y acepta el permiso para usar el micrófono.");
+    else if(c==="rate_limited") setHint("Hay otro dictado en marcha; prueba en un momento.");
+    else if(c==="no_gesture") setHint("Vuelve a pulsar el botón «Dictar».");
+    else if(c!=="stopped") setHint("El dictado ha fallado; inténtalo otra vez.");
+  });
+}
+$("#micBtn").onclick=micClick;
+async function stopDict(){ if(S.dict&&S.dict.active()){ try{ await S.dict.stop(); }catch(e){} } }
+function partialEl(){ return S.dictTargetId==="actaTxt" ? $("#actaPartial") : $("#partial"); }
+function wireDict(d){
+  d.onPartial(({text})=>{ const p=partialEl(); if(p) p.textContent = text?"“"+text+"”":""; });
+  d.onFinal(({text})=>{
+    const ta=S.dictTargetId && document.getElementById(S.dictTargetId); if(!ta) return;
+    let t=text; if(!ta.value) t=t.replace(/^\s+/,"");
+    ta.value+=t; ta.scrollTop=ta.scrollHeight;
+    ta.dispatchEvent(new Event("input"));
+  });
+  d.onState(({state,reason})=>{
+    updMic(state);
+    if(state==="listening") setHint("Escuchando… habla con normalidad; el texto se va añadiendo.");
+    if(state==="idle"){ const p=partialEl(); if(p) p.textContent="";
+      if(reason==="time_limit") setHint("Se alcanzó el límite de 60 min de dictado.");
+      else if(reason==="upstream_error") setHint("Falló el micrófono o el servicio de dictado; inténtalo otra vez.");
+      else if(["stopped","viewer_stopped","hidden"].includes(reason)) setHint(""); }
+  });
+}
+
+/* ================= PDF =================
+   Generador de PDF propio (sin librerías externas): Helvetica, codificación WinAnsi. */
+const HEX = {angel:"#3c6e9e", fesp:"#b5532f", fven:"#b8862b", jaime:"#3f8f5a", meet:"#6b5b95", ink:"#1d1f22", ink2:"#4a4f57", mute:"#7c838c", line:"#dcdcd9", soft:"#f5f4f2", bad:"#b23a32", accent:"#b5532f", ok:"#3f8f5a", warn:"#a8801f"};
+class MiniPDF{
+  constructor(){ this.W=595.28; this.H=841.89; this.pages=[]; this.ctx=document.createElement("canvas").getContext("2d"); this.addPage(); }
+  addPage(){ this.cur=[]; this.pages.push(this.cur); }
+  rgb(h){ const n=parseInt(h.slice(1),16); return [(n>>16)&255,(n>>8)&255,n&255].map(v=>(v/255).toFixed(3)).join(" "); }
+  clean(s){ return String(s??"").replace(/→/g,"->").replace(/[→⇒]/g,"->").replace(/[  ]/g," "); }
+  enc(s){
+    const SP={"€":128,"‚":130,"„":132,"…":133,"‘":145,"’":146,"“":147,"”":148,"•":149,"–":150,"—":151};
+    let o=""; for(const ch of this.clean(s)){ let c=SP[ch]!==undefined?SP[ch]:ch.codePointAt(0); if(c>255||(c>=128&&c<160&&SP[ch]===undefined)) c=63; const C=String.fromCharCode(c); o += (C==="\\"||C==="("||C===")") ? "\\"+C : C; }
+    return o;
+  }
+  width(s,size,bold){ this.ctx.font=`${bold?"bold ":""}${size}px Helvetica, Arial, sans-serif`; return this.ctx.measureText(this.clean(s)).width; }
+  wrap(s,size,bold,maxW){
+    const out=[];
+    for(const para of this.clean(s).split(/\n/)){
+      if(!para.trim()){ out.push(""); continue; }
+      let line="";
+      for(const word of para.split(/\s+/)){
+        const tryL = line?line+" "+word:word;
+        if(this.width(tryL,size,bold)<=maxW){ line=tryL; continue; }
+        if(line) out.push(line);
+        if(this.width(word,size,bold)<=maxW){ line=word; continue; }
+        let chunk=""; for(const ch of word){ if(this.width(chunk+ch,size,bold)>maxW){ out.push(chunk); chunk=ch; } else chunk+=ch; } line=chunk;
+      }
+      if(line) out.push(line);
+    }
+    return out;
+  }
+  text(x,y,s,o={}){ const size=o.size||10; this.cur.push(`BT /${o.bold?"F2":"F1"} ${size} Tf ${this.rgb(o.color||HEX.ink)} rg ${x.toFixed(2)} ${(this.H-y).toFixed(2)} Td (${this.enc(s)}) Tj ET`); }
+  textR(xr,y,s,o={}){ this.text(xr-this.width(s,o.size||10,o.bold),y,s,o); }
+  rect(x,y,w,h,color){ this.cur.push(`${this.rgb(color)} rg ${x.toFixed(2)} ${(this.H-y-h).toFixed(2)} ${w.toFixed(2)} ${h.toFixed(2)} re f`); }
+  line(x1,y1,x2,y2,color,lw=.6){ this.cur.push(`${this.rgb(color)} RG ${lw} w ${x1.toFixed(2)} ${(this.H-y1).toFixed(2)} m ${x2.toFixed(2)} ${(this.H-y2).toFixed(2)} l S`); }
+  output(){
+    const objs=[]; const n=this.pages.length;
+    objs[1]="<< /Type /Catalog /Pages 2 0 R >>";
+    objs[2]=`<< /Type /Pages /Kids [${this.pages.map((_,i)=>`${5+i*2} 0 R`).join(" ")}] /Count ${n} >>`;
+    objs[3]="<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>";
+    objs[4]="<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>";
+    this.pages.forEach((p,i)=>{
+      const st=p.join("\n");
+      objs[5+i*2]=`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${this.W} ${this.H}] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents ${6+i*2} 0 R >>`;
+      objs[6+i*2]=`<< /Length ${st.length} >>\nstream\n${st}\nendstream`;
+    });
+    let out="%PDF-1.4\n%âãÏÓ\n"; const off=[];
+    for(let k=1;k<objs.length;k++){ off[k]=out.length; out+=`${k} 0 obj\n${objs[k]}\nendobj\n`; }
+    const xref=out.length;
+    out+=`xref\n0 ${objs.length}\n0000000000 65535 f \n`+off.slice(1).map(o=>String(o).padStart(10,"0")+" 00000 n \n").join("");
+    out+=`trailer\n<< /Size ${objs.length} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF`;
+    const b=new Uint8Array(out.length); for(let i=0;i<out.length;i++) b[i]=out.charCodeAt(i)&255; return b;
+  }
+}
+function buildPdf(){
+  const P=new MiniPDF(), W=P.W, H=P.H, M=42, CW=W-2*M;
+  const ws = S.worker==="all" ? WORKERS : [wById(S.worker)];
+  const period = `${short(S.from)} – ${short(S.to)} ${parse(S.to).getFullYear()}`;
+  const cap=periodCapacity(), mh=meetingHoursInPeriod();
+  const meets=meetingsInPeriod();
+  const acuerdos = meets.flatMap(d=>acuerdoLines((S.meetings[d]||{}).notes).map(l=>({d,l})));
+  let y=0, who=null;
+  const header=(w,cont)=>{
+    P.rect(0,0,W,7,HEX[w.id]||HEX.accent);
+    P.text(M,44,"Equipo Volta",{size:20,bold:true}); P.textR(W-M,44,"Volta Baterías · Tareas",{size:9,color:HEX.mute});
+    P.rect(M,62,9,9,HEX[w.id]||HEX.accent);
+    P.text(M+15,71,w.name+(cont?" (continuación)":""),{size:15,bold:true});
+    P.textR(W-M,71,period,{size:10,color:HEX.ink2});
+    P.line(M,82,W-M,82,HEX.line,.8);
+    y=100;
+  };
+  const need=h=>{ if(y+h>H-56){ P.addPage(); header(who,true); } };
+  ws.forEach((w,wi)=>{
+    if(wi>0) P.addPage();
+    who=w; header(w,false);
+    const ts = tasksInPeriod().filter(t=>t.worker===w.id).sort((a,b)=>prioRank(a.priority)-prioRank(b.priority)||a.to.localeCompare(b.to));
+    const used = ts.reduce((s,t)=>s+hoursInPeriod(t),0)+mh, pc=used/cap*100, free=cap-used;
+    // resumen
+    const meetTxt = meets.length ? `Reunión semanal: ` + meets.map(d=>{ const b=S.cfg.meetingTime||"09:00"; if(!w.tz) return `${nice(d)} a las ${b}`; const l=timeIn(w.tz,d,b); return `${nice(l.date)} a las ${l.time} hora de ${w.tzName} (${b} en España)`; }).join(", ") + ` · ${fmtH(S.cfg.meetingHours)}` : "Sin reunión semanal en estas fechas";
+    P.rect(M,y,CW,50,HEX.soft);
+    P.text(M+12,y+19,`Carga planificada: ${fmtH(used)} de ${cap} h (${fmtN(pc)} %) · ${ts.length} tarea${ts.length===1?"":"s"} · ${free>=0?fmtH(free)+" libres":fmtH(-free)+" de más"}`,{size:10.5,bold:true,color:free<0?HEX.bad:HEX.ink});
+    P.text(M+12,y+36,meetTxt,{size:9.5,color:HEX.meet});
+    y+=66;
+    // acuerdos de la reunión que le afectan (o todos si no se nombra a nadie)
+    const lower = s=>s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
+    const namedIn = txt => { let L=lower(txt); const out=[]; for(const x of WORKERS.slice().sort((a,b)=>b.name.length-a.name.length)){ const n=lower(x.name); if(L.includes(n)){ out.push(x.id); L=L.split(n).join(" "); } } return out; };
+    const mine = acuerdos.filter(a=>{ const named=namedIn(a.l); return !named.length || named.includes(w.id); });
+    if(mine.length){
+      P.text(M,y,"Acuerdos de la reunión",{size:11,bold:true,color:HEX.meet}); y+=15;
+      for(const a of mine){ const ls=P.wrap("• "+a.l,9.5,false,CW-10); need(ls.length*12+4); ls.forEach(l=>{ P.text(M+6,y,l,{size:9.5,color:HEX.ink2}); y+=12; }); }
+      y+=10;
+    }
+    P.text(M,y,"Tareas",{size:12,bold:true}); P.textR(W-M,y,"ordenadas por prioridad y día límite",{size:8.5,color:HEX.mute}); y+=16;
+    if(!ts.length){ P.text(M,y+4,"Sin tareas asignadas en estas fechas.",{size:10,color:HEX.mute}); return; }
+    ts.forEach((t,i)=>{
+      const st=(STATUS[t.status]||STATUS.pend)[0], du=dueInfo(t), wd=workdays(t.from,t.to), wk=weeklyHours(t);
+      const badgeW = t.priority==="alta" ? P.width("URGENTE",8,true)+12 : 0;
+      const titleL = P.wrap(t.title,12,true,CW-16-badgeW);
+      const meta = `Plazo: ${short(t.from)} - ${short(t.to)} (${wd} días lab.)  ·  Horas: ${fmtH(t.hours)}  ·  ${fmtN(wk/WEEK_HOURS*100)} % de 40 h/semana  ·  Ritmo: ${fmtH(dailyPace(t))}/día`;
+      const metaL = P.wrap(meta,9,false,CW-16);
+      const state = `Prioridad: ${PRIO[t.priority][0]}  ·  Estado: ${st}  ·  ${du.txt}`;
+      const descL = t.description ? P.wrap(t.description,10,false,CW-16) : [];
+      const attL = t.attachments.length ? P.wrap(`Adjuntos (ver en la web): ${t.attachments.map(a=>a.name).join(", ")}`,8.5,false,CW-16) : [];
+      const h = titleL.length*15 + metaL.length*11.5 + 13 + (descL.length? descL.length*13+6:0) + attL.length*11 + 16;
+      need(Math.min(h, H-160));
+      const y0=y, pg0=P.pages.length;
+      let x=M+12;
+      if(t.priority==="alta"){ P.rect(x,y-9,badgeW-4,12,HEX.bad); P.text(x+4,y,"URGENTE",{size:8,bold:true,color:"#ffffff"}); x+=badgeW; }
+      titleL.forEach((l,k)=>{ P.text(k?M+12:x,y,l,{size:12,bold:true,color:t.status==="hecha"?HEX.mute:HEX.ink}); y+=15; });
+      metaL.forEach(l=>{ P.text(M+12,y,l,{size:9,color:HEX.ink2}); y+=11.5; });
+      P.text(M+12,y,state,{size:9,bold:true,color:du.cls==="late"?HEX.bad:du.cls==="soon"?HEX.warn:HEX.ink2}); y+=13;
+      if(descL.length){ y+=4; for(const l of descL){ need(13); P.text(M+12,y,l,{size:10}); y+=13; } y+=2; }
+      attL.forEach(l=>{ need(11); P.text(M+12,y,l,{size:8.5,color:HEX.mute}); y+=11; });
+      // barra de color a la izquierda (en la página donde empieza la tarea)
+      if(P.pages.length===pg0) P.rect(M,y0-11,3,Math.max(8,y-(y0-11)-4),HEX[w.id]||HEX.accent);
+      y+=6; if(i<ts.length-1){ P.line(M,y,W-M,y,HEX.line,.5); y+=16; }
+    });
+  });
+  const gen = new Date().toLocaleString("es-ES",{day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit"});
+  P.pages.forEach((p,i)=>{ P.cur=p; P.line(M,H-40,W-M,H-40,HEX.line,.5); P.text(M,H-26,`Generado el ${gen}`,{size:8,color:HEX.mute}); P.textR(W-M,H-26,`Página ${i+1} de ${P.pages.length}`,{size:8,color:HEX.mute}); });
+  return P.output();
+}
+$("#pdfBtn").onclick=async ()=>{
+  if(!S.loaded){ toast("Espera a que carguen las tareas."); return; }
+  let bytes; try{ bytes=buildPdf(); }catch(e){ console.error(e); toast("No se pudo generar el PDF."); return; }
+  const w = S.worker==="all" ? "" : " - "+wById(S.worker).name;
+  const filename = `Tareas Equipo Volta ${S.from} a ${S.to}${w}.pdf`;
+  if(!S.downloads){ toast("La descarga no está disponible en esta vista. Abre la página en el navegador con tu sesión de Claude."); return; }
+  try{ await S.downloads.save({filename, data:new Blob([bytes],{type:"application/pdf"})}); toast("PDF descargado"); }
+  catch(e){ const c=e&&e.code; if(c==="declined") return; toast(c==="rate_limited"?"Ya hay una descarga pendiente de confirmar.":"No se pudo descargar el PDF."); }
+};
+
+/* ================= AJUSTES ================= */
+$("#settingsBtn").onclick=openSettings;
+function updTzHint(){
+  const t=$("#mTime").value||"09:00", dow=Number($("#mDay").value)||1;
+  const ref=ymd(addDays(monday(new Date()),dow-1));
+  $("#mTzHint").textContent = WORKERS.filter(x=>x.tz).map(x=>{ const l=timeIn(x.tz,ref,t); return `Para ${x.name} serán las ${l.time} en ${x.tzName}${l.shifted?` (${DOWc(l.date)})`:""}.`; }).join(" ");
+}
+["#mTime","#mDay"].forEach(q=>$(q).addEventListener("input",updTzHint));
+function openSettings(){ setTimeout(updTzHint,0); const c=S.cfg; $("#mDay").value=String(c.meetingDay||1); $("#mTime").value=c.meetingTime||"09:00"; $("#mDur").value=c.meetingHours||1; $("#mNote").value=c.meetingNote||""; $("#setMsg").textContent="";
+  $("#codeEdit").innerHTML = ROLES.map(r=>`<div class="code-row"><span><span class="avatar" style="background:${r.color};width:24px;height:24px;font-size:11px">${r.short}</span>${esc(r.name)}${(S.cfg.codes||{})[r.id]?"":' <em class="hint">(sin código)</em>'}</span><input data-code="${r.id}" inputmode="numeric" maxlength="6" placeholder="••••••"></div>`).join(""); $("#setOv").classList.remove("hidden"); }
+$("#setSave").onclick=async ()=>{
+  if(!S.db){ $("#setMsg").textContent="No hay conexión con la base de datos."; return; }
+  const body={...S.cfg, meetingDay:Number($("#mDay").value), meetingTime:$("#mTime").value||"09:00", meetingHours:Number($("#mDur").value)||1, meetingNote:$("#mNote").value.trim()};
+  delete body.passHash;
+  const newCodes={};
+  for(const inp of document.querySelectorAll("#codeEdit input")){
+    const v=inp.value.trim(); if(!v) continue;
+    if(!/^\d{6}$/.test(v)){ $("#setMsg").textContent="Cada código debe tener exactamente 6 números."; return; }
+    newCodes[inp.dataset.code]=v;
+  }
+  const vs=Object.values(newCodes); if(new Set(vs).size!==vs.length){ $("#setMsg").textContent="Hay dos personas con el mismo código. Cada código debe ser distinto."; return; }
+  if(!(S.cfg.codes||{}).admin && !newCodes.admin){ $("#setMsg").textContent="El administrador necesita un código."; return; }
+  delete body.codes; body.newCodes=newCodes;
+  try{ await S.db.doc("config/main").set(body); closeModals(); toast(vs.length?"Ajustes y códigos guardados":"Ajustes guardados"); }
+  catch(e){ $("#setMsg").textContent = e&&e.message ? e.message : "No se pudo guardar."; }
+};
+
+/* ================= EVENTOS DEL ADAPTADOR (Netlify) ================= */
+window.addEventListener("volta-logout",()=>{ if(S.role){ store.del("tl-session"); S.role=null; S.me=null; S.sel=null; $("#loginOv").classList.remove("hidden"); $("#admErr").textContent="Tu sesión ha caducado. Vuelve a entrar con tu código."; } });
+window.addEventListener("volta-ready",e=>{
+  $("#banner").classList.add("hidden");
+  const ai = e.detail && e.detail.aiEnabled;
+  if(!ai){ S.sample=null; $("#aiBtn").classList.add("hidden"); } else { claude.use("sample").then(x=>{ S.sample=x; $("#aiBtn").classList.remove("hidden"); renderDetail(); }); }
+  renderDetail();
+});
+window.addEventListener("volta-error",e=>{ $("#banner").textContent="No se pudieron cargar los datos: "+((e.detail&&e.detail.message)||"error")+". Se reintentará en un minuto."; $("#banner").classList.remove("hidden"); });
+
+/* ================= ARRANQUE ================= */
+(function boot(){
+  const r=store.get("tl-range");
+  if(r&&r.from&&r.to){ S.from=r.from; S.to=r.to; } else { const m=monday(new Date()); S.from=ymd(m); S.to=ymd(addDays(m,4)); }
+  $("#from").value=S.from; $("#to").value=S.to;
+  const ses=VoltaAPI.session();
+  if(ses&&ses.role){ S.role=ses.role; S.me=ses.who||null; S.worker=ses.role==="worker"?ses.who:"all"; $("#loginOv").classList.add("hidden"); }
+  renderAll();
+  if(!S.role) setTimeout(()=>boxes[0].focus(),50);
+})();
+
+(async function connect(){
+  const timer=setTimeout(()=>{ if(!S.loaded){ $("#banner").textContent="No se pueden cargar los datos todavía. Comprueba la conexión."; $("#banner").classList.remove("hidden"); } },10000);
+  // dictado y adjuntos se piden en paralelo para que no esperen a la base de datos
+  (async()=>{ try{ S.dict = window.claude ? await claude.use("dictation") : null; if(S.dict) wireDict(S.dict); }catch(e){ S.dict=null; } S.dictTried=true; updMic("idle"); })();
+  (async()=>{ try{ S.assets = window.claude ? await claude.use("assets") : null; }catch(e){} })();
+  (async()=>{ try{ S.downloads = window.claude ? await claude.use("downloads") : null; }catch(e){} })();
+  (async()=>{ try{ S.sample = window.claude ? await claude.use("sample") : null; }catch(e){ S.sample=null; } if(S.sample){ $("#aiBtn").classList.remove("hidden"); renderDetail(); } })();
+  let db=null;
+  try{ db = window.claude && await claude.use("db"); }catch(e){}
+  if(!db){ clearTimeout(timer); S.loaded=true; $("#banner").textContent="La base de datos no está disponible en esta vista (¿sesión de Claude iniciada?). Los datos no se guardarán."; $("#banner").classList.remove("hidden"); renderAll(); return; }
+  S.db=db;
+  db.collection("tasks").onSnapshot(snap=>{
+    S.tasks = snap.docs.filter(d=>d.exists).map(d=>{ const x=d.data()||{};
+      const from=String(x.dateFrom||x.date||todayS()), to=String(x.dateTo||x.date||from);
+      return {id:d.id, title:String(x.title||"Sin título"), worker:String(x.worker||""), status:String(x.status||"pend"),
+        priority: PRIO[x.priority] ? x.priority : "normal", meetingDate: x.meetingDate?String(x.meetingDate):null, templateId: x.templateId?String(x.templateId):null,
+        from, to: to<from?from:to, hours:Number(x.hours)||0, description:String(x.description||""),
+        attachments:Array.isArray(x.attachments)?x.attachments:[], createdAt:x.createdAt||null}; });
+    if(!snap.metadata.fromCache){ clearTimeout(timer); $("#banner").classList.add("hidden"); }
+    S.loaded=true; if(S.sel&&!findItem(S.sel)) S.sel=null;
+    renderData();
+  }, ()=>{ clearTimeout(timer); S.loaded=true; $("#banner").textContent="Se perdió la conexión con los datos. Recarga la página."; $("#banner").classList.remove("hidden"); renderAll(); });
+  db.collection("templates").onSnapshot(snap=>{
+    S.templates = snap.docs.filter(d=>d.exists).map(d=>{ const x=d.data()||{}; return {id:d.id, title:String(x.title||"Sin título"), worker:String(x.worker||""), priority:PRIO[x.priority]?x.priority:"normal",
+      hours:Number(x.hours)||0, description:String(x.description||""), attachments:Array.isArray(x.attachments)?x.attachments:[], fromDow:Number(x.fromDow)||1, spanDays:Number(x.spanDays)||0}; });
+    renderList();
+  }, ()=>{});
+  db.collection("meetings").onSnapshot(snap=>{
+    const m={}; snap.docs.forEach(d=>{ if(d.exists){ const x=d.data()||{}; m[d.id]={notes:String(x.notes||""), updatedAt:x.updatedAt||null}; } });
+    S.meetings=m; renderDetail();
+  }, ()=>{});
+  db.doc("config/main").onSnapshot(snap=>{
+    if(snap.exists){ const c=snap.data()||{}; S.cfg={meetingDay:Number(c.meetingDay)||1, meetingTime:String(c.meetingTime||"09:00"), meetingHours:Number(c.meetingHours)||1, meetingNote:String(c.meetingNote||""), codes:(c.codes&&typeof c.codes==="object")?{...c.codes}:{}}; }
+    S.cfgLoaded=true;
+    renderData();
+  }, ()=>{});
+})();
+</script>
+</body>
+</html>
