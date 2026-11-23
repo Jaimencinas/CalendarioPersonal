@@ -45,6 +45,7 @@ Las comprobaciones de seguridad se hacen en el servidor:
    | `SESSION_SECRET` | Una frase larga y aleatoria (por ejemplo, 40 caracteres cualesquiera) |
    | `ANTHROPIC_API_KEY` | *(Opcional)* Clave de la API de Claude para el botón «Ordenar con IA» |
    | `ANTHROPIC_MODEL` | *(Opcional)* Por defecto `claude-sonnet-5-5` |
+   | `CLICKUP_TOKEN` | *(Opcional)* Token personal de ClickUp (empieza por `pk_`) para el botón «Traer de ClickUp» |
 
 3. **Deploys → Trigger deploy**. Al terminar, abre la URL del sitio y entra con tu código.
 
@@ -58,6 +59,27 @@ En airtable.com/create/tokens, crea un token con:
 ### Si cambias `SESSION_SECRET`
 
 Todas las sesiones abiertas se cierran y todo el mundo tiene que volver a meter su código.
+
+## Traer tareas de ClickUp
+
+Con `CLICKUP_TOKEN` configurado, en **Nueva tarea** aparece el buscador **«⇣ Traer de ClickUp»**. Busca entre las tareas abiertas del espacio de trabajo y, al elegir una, rellena:
+
+- Título, persona asignada, prioridad y estado.
+- Fechas de inicio y vencimiento.
+- Estimación de tiempo y descripción.
+
+La tarea guarda el enlace a la original (campo `ClickUp` en Airtable).
+
+En el detalle de la tarea aparecen dos botones:
+
+- **«Abrir en ClickUp»**.
+- **«↻ Actualizar desde ClickUp»:** vuelve a copiar los datos.
+
+Es una copia: los cambios en ClickUp no llegan solos.
+
+Las personas se reconocen por su correo de ClickUp, según la tabla `CLICKUP_EMAILS` en `netlify/lib/common.mjs`. Para añadir más sin tocar código, usa la variable `CLICKUP_EMAILS="correo=id,correo=id"`, donde los ids son `angel`, `fesp`, `fven` o `jaime`.
+
+El token se saca en ClickUp → avatar → **Settings → Apps → API Token**.
 
 ## Códigos de acceso
 

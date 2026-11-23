@@ -12,6 +12,7 @@ function taskOut(r) {
     id: r.id, title: f["Título"] || "Sin título", worker: workerId(f.Trabajador), status: statusId(f.Estado), priority: prioId(f.Prioridad),
     dateFrom: f.Desde || null, dateTo: f.Hasta || f.Desde || null, hours: Number(f.Horas) || 0, description: f["Descripción"] || "",
     attachments: (f.Adjuntos || []).map(att), meetingDate: f["Reunión"] || null, templateId: f.Repetitiva || null,
+    clickupUrl: f.ClickUp || null,
   };
 }
 function tplOut(r) {
@@ -47,6 +48,7 @@ export default handler(async (req) => {
       config: { meetingDay: 1, meetingTime: "09:00", meetingHours: 1, meetingNote: "", ...(cfg.reunion?.value || {}),
         codes: isAdmin ? Object.fromEntries(Object.keys(codes).map(k => [k, true])) : {} },
       aiEnabled: isAdmin && !!ENV.anthropicKey,
+      clickupEnabled: isAdmin && !!ENV.clickupToken,
     });
   }
   if (req.method !== "POST") throw new HttpError(405, "Método no permitido");
@@ -60,6 +62,7 @@ export default handler(async (req) => {
         "Título": String(t.title || "").slice(0, 200), Trabajador: WORKERS[t.worker], Estado: STATUS[t.status] || STATUS.pend, Prioridad: PRIO[t.priority] || PRIO.normal,
         Desde: date(t.dateFrom), Hasta: date(t.dateTo), Horas: Math.max(0, Number(t.hours) || 0), "Descripción": String(t.description || ""),
         "Reunión": date(t.meetingDate), Repetitiva: t.templateId ? String(t.templateId) : "",
+        ClickUp: /^https:\/\/(app\.)?clickup\.com\//.test(String(t.clickupUrl || "")) ? String(t.clickupUrl) : null,
         Adjuntos: await attachmentsFor(T.tasks, b.id, t.attachments),
       };
       const r = b.id ? await updateRecord(T.tasks, b.id, fields) : await createRecord(T.tasks, fields);

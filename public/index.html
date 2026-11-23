@@ -205,6 +205,17 @@ main{display:grid;grid-template-columns:minmax(330px,420px) 1fr;gap:28px;padding
 .btn.ai.busy{opacity:.7;cursor:progress}
 .ai-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;background:#f4f1f9;border:1px solid #e1dbee;border-radius:6px;padding:8px 10px;font-size:13px;color:#3f3560}
 .ai-bar .btn{padding:4px 10px;font-size:13px}
+/* ClickUp */
+.cu-box{background:#eef3fb;border:1px solid #d6e1f3;border-radius:6px;padding:12px}
+.cu-box label{color:#3c5f9e!important}
+.cu-results{max-height:260px;overflow:auto;border:1px solid var(--line);border-radius:6px;background:#fff;margin-top:6px}
+.cu-item{display:grid;grid-template-columns:1fr auto;gap:4px 10px;padding:8px 10px;border-bottom:1px solid var(--line2);cursor:pointer;font-size:13.5px}
+.cu-item:hover{background:#f6f9fe}
+.cu-item b{font-weight:600}
+.cu-item small{color:var(--mute);grid-column:1/-1}
+.cu-item.dup{opacity:.6}
+.cu-linked{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#eef3fb;border:1px solid #d6e1f3;border-radius:6px;padding:8px 12px;font-size:13.5px;color:#3c5f9e}
+.cu-tag{font-size:11px;font-weight:700;color:#3c5f9e;background:#e3ebf8;border-radius:4px;padding:1px 6px}
 /* repetitivas */
 .tpl-box{background:#f4f1f9;border:1px solid #e1dbee;border-radius:6px;padding:12px}
 .tpl-box label{color:var(--meet)!important}
@@ -334,6 +345,13 @@ main{display:grid;grid-template-columns:minmax(330px,420px) 1fr;gap:28px;padding
         <div style="display:flex;gap:8px"><select id="eTpl" style="flex:1"></select><button type="button" class="btn danger hidden" id="tplDel">Quitar de la lista</button></div>
         <div class="hint" id="tplHint">Elige una para rellenar la tarea con sus datos y las fechas de esta semana.</div>
       </div>
+      <div class="f cu-box hidden" id="cuRow">
+        <label for="cuQ">⇣ Traer de ClickUp</label>
+        <input id="cuQ" placeholder="Busca por nombre, lista o persona… (vacío = las más recientes)" autocomplete="off">
+        <div class="cu-results hidden" id="cuResults"></div>
+        <div class="hint" id="cuHint">Elige una tarea de ClickUp para rellenar esta tarea con sus datos.</div>
+      </div>
+      <div class="cu-linked hidden" id="cuLinked"></div>
       <div class="f"><label for="eTitle">Título</label><input id="eTitle" required maxlength="140" placeholder="Ej. Reparar batería bici L26-0030"></div>
       <div class="grid3">
         <div class="f"><label for="eWorker">Trabajador</label><select id="eWorker"></select></div>
@@ -575,7 +593,7 @@ function renderList(){
       html += `<div class="row ${S.sel===t.id?"sel":""}" data-id="${esc(t.id)}">
         <span class="t ${du.cls==="late"?"late":""}" title="Día límite">${MON[d.getMonth()]}<b>${d.getDate()}</b></span>
         <div>${t.priority!=="normal"?`<div style="margin-bottom:3px">${prioBadge(t.priority)}</div>`:""}<div class="ti">${esc(t.title)}</div>
-          <div class="su">${w?"":`<span class="dot" style="background:${wk.color}"></span>`}<span class="mono">${fmtH(t.hours)}</span> · ${short(t.from)} → ${short(t.to)}${t.templateId?` <span class="rep" title="Tarea repetitiva semanal">↻ Semanal</span>`:""}${t.attachments.length?` · 📎 ${t.attachments.length}`:""}</div>
+          <div class="su">${w?"":`<span class="dot" style="background:${wk.color}"></span>`}<span class="mono">${fmtH(t.hours)}</span> · ${short(t.from)} → ${short(t.to)}${t.templateId?` <span class="rep" title="Tarea repetitiva semanal">↻ Semanal</span>`:""}${t.clickupUrl?` <span class="cu-tag" title="Traída de ClickUp">ClickUp</span>`:""}${t.attachments.length?` · 📎 ${t.attachments.length}`:""}</div>
           <div class="due ${du.cls}">${du.txt}</div></div>
         <span class="pill ${st[1]}">${st[0]}</span></div>`;
     }
@@ -669,7 +687,7 @@ function renderDetail(){
   box.innerHTML=`<div class="det">
     <div class="det-top">
       <div><span class="pill ${st[1]}">${st[0]}</span><h3>${esc(t.title)}</h3></div>
-      <div class="det-actions">${adm?`<button class="btn" id="dEdit">Editar</button><button class="btn" id="dDup">Duplicar</button>`:""}</div>
+      <div class="det-actions">${t.clickupUrl?`<a class="btn" href="${esc(t.clickupUrl)}" target="_blank" rel="noopener">Abrir en ClickUp ↗</a>`:""}${adm&&t.clickupUrl&&S.clickupEnabled?`<button class="btn" id="dCuSync" title="Vuelve a copiar título, fechas, horas, estado, prioridad y descripción desde ClickUp">↻ Actualizar desde ClickUp</button>`:""}${adm?`<button class="btn" id="dEdit">Editar</button><button class="btn" id="dDup">Duplicar</button>`:""}</div>
     </div>
     <div class="meta">
       <div><small>Trabajador</small><b style="display:flex;align-items:center;gap:7px"><span class="dot" style="background:${w.color}"></span>${esc(w.name)}</b></div>
@@ -694,7 +712,8 @@ function renderDetail(){
       <div class="pv">${isImg(a)?`<img src="${esc(attUrl(a))}" alt="">`:isVid(a)?`<video src="${esc(attUrl(a))}" muted></video>`:esc(attIcon(a))}</div>
       <div class="nm" title="${esc(a.name)}">${esc(a.name)}</div></a>`).join("")}</div>`:`<div class="hint">Sin archivos adjuntos.</div>`}
   </div>`;
-  if(adm){ $("#dEdit").onclick=()=>openEditor(t); $("#dDup").onclick=()=>openEditor({...t,id:null,title:t.title+" (copia)"}); }
+  if(adm){ $("#dEdit").onclick=()=>openEditor(t); $("#dDup").onclick=()=>openEditor({...t,id:null,title:t.title+" (copia)",clickupUrl:null}); }
+  if($("#dCuSync")) $("#dCuSync").onclick=()=>syncFromClickUp(t);
 }
 
 /* ---- reunión: acta y acuerdos ---- */
@@ -954,6 +973,81 @@ ${text.slice(0,12000)}
   finally{ aiCtl=null; const b=$("#actaAi"); if(b){ b.classList.remove("busy"); b.textContent="✨ Ordenar acta"; } }
 }
 
+/* ================= CLICKUP: traer tareas ================= */
+const cuIdFromUrl = u => { const m=String(u||"").match(/\/t\/(?:\d+\/)?([A-Za-z0-9_-]+)/); return m?m[1]:null; };
+let cuTimer=null, cuCtl=null, cuList=[];
+function setupClickUpUI(base){
+  const isNew=!base.id;
+  $("#cuRow").classList.toggle("hidden", !(isNew && S.clickupEnabled && !base.clickupUrl));
+  $("#cuQ").value=""; $("#cuResults").classList.add("hidden"); $("#cuResults").innerHTML="";
+  $("#cuHint").textContent="Elige una tarea de ClickUp para rellenar esta tarea con sus datos.";
+  renderCuLinked();
+}
+function renderCuLinked(){
+  const u=S.edit&&S.edit.clickupUrl;
+  $("#cuLinked").classList.toggle("hidden", !u);
+  $("#cuLinked").innerHTML = u ? `<span>🔗 Vinculada a una tarea de ClickUp</span><a href="${esc(u)}" target="_blank" rel="noopener">Abrir en ClickUp ↗</a><button type="button" class="btn ghost" id="cuUnlink">Quitar vínculo</button>` : "";
+  if(u) $("#cuUnlink").onclick=()=>{ S.edit.clickupUrl=null; renderCuLinked(); if(!S.edit.id && S.clickupEnabled) $("#cuRow").classList.remove("hidden"); };
+}
+async function cuSearch(){
+  if(cuCtl) cuCtl.abort(); cuCtl=new AbortController();
+  const q=$("#cuQ").value.trim(), box=$("#cuResults");
+  box.classList.remove("hidden"); box.innerHTML=`<div class="cu-item"><small>Buscando en ClickUp…</small></div>`;
+  try{
+    cuList = await VoltaAPI.clickupSearch(q, cuCtl.signal);
+    const have = new Set(S.tasks.map(t=>cuIdFromUrl(t.clickupUrl)).filter(Boolean));
+    box.innerHTML = cuList.length ? cuList.map((t,i)=>{
+      const w = t.worker ? wById(t.worker).name : (t.assignees.join(", ")||"sin asignar");
+      const plazo = t.dateTo ? `hasta ${short(t.dateTo)}` : "sin fecha";
+      return `<div class="cu-item ${have.has(t.id)?"dup":""}" data-i="${i}"><b>${esc(t.title)}</b><span class="hint">${esc(t.statusName)}</span>
+        <small>${esc([t.folder,t.list].filter(Boolean).join(" › "))} · ${esc(w)} · ${esc(plazo)}${t.hours?` · ${fmtH(t.hours)}`:""}${have.has(t.id)?" · ya está en el calendario":""}</small></div>`; }).join("")
+      : `<div class="cu-item"><small>No hay tareas abiertas en ClickUp que coincidan.</small></div>`;
+  }catch(e){ if(e&&e.name==="AbortError") return; box.innerHTML=`<div class="cu-item"><small style="color:var(--bad)">${esc(e.message||"No se pudo buscar en ClickUp")}</small></div>`; }
+}
+$("#cuQ").addEventListener("input",()=>{ clearTimeout(cuTimer); cuTimer=setTimeout(cuSearch,350); });
+$("#cuQ").addEventListener("focus",()=>{ if(!cuList.length || $("#cuResults").classList.contains("hidden")) cuSearch(); });
+function applyClickUp(t){
+  $("#eTitle").value=t.title;
+  if(t.worker) $("#eWorker").value=t.worker;
+  $("#ePrio").value=t.priority||"normal"; $("#eStatus").value=t.status||"pend";
+  const T=todayS();
+  const to = t.dateTo || t.dateFrom || ymd(addDays(parse(T),4));
+  let from = t.dateFrom || (T<=to?T:to); if(from>to) from=to;
+  $("#eFrom").value=from; $("#eTo").value=to;
+  if(t.hours) $("#eHours").value=t.hours;
+  const origen = `Origen: ClickUp${t.list?" · "+t.list:""}`;
+  $("#eDesc").value = (t.description ? t.description.trim()+"\n\n" : "") + origen;
+  S.edit.clickupUrl=t.url;
+  updCalc(); renderCuLinked();
+}
+$("#cuResults").addEventListener("click",async e=>{
+  const it=e.target.closest(".cu-item[data-i]"); if(!it) return;
+  const t=cuList[Number(it.dataset.i)]; if(!t) return;
+  $("#cuHint").textContent="Trayendo la tarea de ClickUp…";
+  try{
+    const full = await VoltaAPI.clickupTask(t.id);
+    applyClickUp(full);
+    $("#cuResults").classList.add("hidden"); $("#cuRow").classList.add("hidden");
+    const miss=[]; if(!full.worker) miss.push("la persona"); if(!full.dateTo) miss.push("el día límite"); if(!full.hours) miss.push("las horas");
+    $("#micHint").textContent = miss.length ? `Traída de ClickUp. En ClickUp no tenía ${miss.join(", ")}: revísalo antes de guardar.` : "Traída de ClickUp. Revisa los datos y guarda.";
+  }catch(err){ $("#cuHint").textContent = err.message || "No se pudo traer la tarea."; }
+});
+async function syncFromClickUp(t){
+  const id=cuIdFromUrl(t.clickupUrl); if(!id) return;
+  const btn=$("#dCuSync"); if(btn){ btn.disabled=true; btn.textContent="↻ Actualizando…"; }
+  try{
+    const c = await VoltaAPI.clickupTask(id);
+    const to = c.dateTo || t.to, from0 = c.dateFrom || t.from, from = from0>to?to:from0;
+    const body = { title:c.title, worker:c.worker||t.worker, status:c.status, priority:c.priority, dateFrom:from, dateTo:to,
+      hours: c.hours || t.hours, description: (c.description? c.description.trim()+"\n\n":"") + `Origen: ClickUp${c.list?" · "+c.list:""}`,
+      attachments: t.attachments.map(a=>({id:a.id,name:a.name,contentType:a.contentType||"",size:a.size||0,url:a.url||""})),
+      meetingDate:t.meetingDate||null, templateId:t.templateId||null, clickupUrl:c.url||t.clickupUrl, updatedAt:new Date().toISOString() };
+    await S.db.collection("tasks").doc(t.id).set(body);
+    toast("Actualizada con los datos de ClickUp");
+  }catch(e){ toast(e.message||"No se pudo actualizar desde ClickUp"); }
+  finally{ const b=$("#dCuSync"); if(b){ b.disabled=false; b.textContent="↻ Actualizar desde ClickUp"; } }
+}
+
 /* ================= ACCESO CON CÓDIGO =================
    Cada persona entra con su código de 6 dígitos; el del administrador ve todo y crea tareas. */
 const ROLES = [{id:"admin", name:"Administrador", short:"A", color:"var(--accent)"}, ...WORKERS];
@@ -1009,6 +1103,7 @@ function openEditor(t){
   $("#attAddLbl").classList.toggle("hidden",!canUp);
   $("#attHint").textContent = canUp?"Fotos, vídeos, PDF o documentos (máx. 4 MB por archivo).":"No se pueden subir adjuntos ahora mismo.";
   setupTplUI(base);
+  setupClickUpUI(base);
   renderEditAtts(); updCalc();
   $("#editOv").classList.remove("hidden"); setTimeout(()=>$("#eTitle").focus(),30);
 }
@@ -1100,6 +1195,7 @@ $("#saveBtn").onclick=async ()=>{
     attachments:S.edit.attachments.map(a=>({id:a.id,name:a.name,contentType:a.contentType||"",size:a.size||0,url:a.url||""})),
     createdAt:S.edit.createdAt||now, updatedAt:now };
   if(S.edit.meetingDate) body.meetingDate=S.edit.meetingDate;
+  body.clickupUrl = S.edit.clickupUrl || null;
   let tplRef=null;
   if($("#eTplSave").checked){
     const exists = S.edit.templateId && S.templates.find(t=>t.id===S.edit.templateId);
@@ -1339,6 +1435,7 @@ $("#setSave").onclick=async ()=>{
 /* ================= EVENTOS DEL ADAPTADOR (Netlify) ================= */
 window.addEventListener("volta-logout",()=>{ if(S.role){ store.del("tl-session"); S.role=null; S.me=null; S.sel=null; $("#loginOv").classList.remove("hidden"); $("#admErr").textContent="Tu sesión ha caducado. Vuelve a entrar con tu código."; } });
 window.addEventListener("volta-ready",e=>{
+  S.clickupEnabled = !!(e.detail && e.detail.clickupEnabled);
   $("#banner").classList.add("hidden");
   const ai = e.detail && e.detail.aiEnabled;
   if(!ai){ S.sample=null; $("#aiBtn").classList.add("hidden"); } else { claude.use("sample").then(x=>{ S.sample=x; $("#aiBtn").classList.remove("hidden"); renderDetail(); }); }
@@ -1372,7 +1469,7 @@ window.addEventListener("volta-error",e=>{ $("#banner").textContent="No se pudie
     S.tasks = snap.docs.filter(d=>d.exists).map(d=>{ const x=d.data()||{};
       const from=String(x.dateFrom||x.date||todayS()), to=String(x.dateTo||x.date||from);
       return {id:d.id, title:String(x.title||"Sin título"), worker:String(x.worker||""), status:String(x.status||"pend"),
-        priority: PRIO[x.priority] ? x.priority : "normal", meetingDate: x.meetingDate?String(x.meetingDate):null, templateId: x.templateId?String(x.templateId):null,
+        priority: PRIO[x.priority] ? x.priority : "normal", meetingDate: x.meetingDate?String(x.meetingDate):null, templateId: x.templateId?String(x.templateId):null, clickupUrl: x.clickupUrl?String(x.clickupUrl):null,
         from, to: to<from?from:to, hours:Number(x.hours)||0, description:String(x.description||""),
         attachments:Array.isArray(x.attachments)?x.attachments:[], createdAt:x.createdAt||null}; });
     if(!snap.metadata.fromCache){ clearTimeout(timer); $("#banner").classList.add("hidden"); }

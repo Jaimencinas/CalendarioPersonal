@@ -34,7 +34,7 @@
   }
 
   /* ---------- datos en memoria + suscriptores ---------- */
-  const state = { tasks: [], templates: [], meetings: [], config: null, loaded: false, aiEnabled: false };
+  const state = { tasks: [], templates: [], meetings: [], config: null, loaded: false, aiEnabled: false, clickupEnabled: false };
   const subs = { tasks: [], templates: [], meetings: [], config: [] };
   const docOf = (id, data) => ({ id, exists: true, data: () => data, metadata: { fromCache: false, hasPendingWrites: false } });
   function emit(kind) {
@@ -57,9 +57,9 @@
       try {
         const d = await call("api");
         state.tasks = d.tasks || []; state.templates = d.templates || []; state.meetings = d.meetings || [];
-        state.config = d.config || null; state.aiEnabled = !!d.aiEnabled; state.loaded = true;
+        state.config = d.config || null; state.aiEnabled = !!d.aiEnabled; state.clickupEnabled = !!d.clickupEnabled; state.loaded = true;
         emitAll();
-        window.dispatchEvent(new CustomEvent("volta-ready", { detail: { aiEnabled: state.aiEnabled, session: d.session } }));
+        window.dispatchEvent(new CustomEvent("volta-ready", { detail: { aiEnabled: state.aiEnabled, clickupEnabled: state.clickupEnabled, session: d.session } }));
       } catch (e) {
         console.error(e);
         window.dispatchEvent(new CustomEvent("volta-error", { detail: { message: e.message } }));
@@ -235,6 +235,9 @@
     async login(code) { const r = await call("login", { method: "POST", body: { code } }); tok.set(r); await refresh(); return r; },
     logout() { tok.clear(); state.aiEnabled = false; refresh(); },
     refresh,
+    clickupEnabled: () => state.clickupEnabled,
+    clickupSearch: (q, signal) => call("clickup?q=" + encodeURIComponent(q || ""), { signal }).then(r => r.tasks || []),
+    clickupTask: id => call("clickup?id=" + encodeURIComponent(id)).then(r => r.task),
   };
   if (tok.get()) refresh();
 })();

@@ -7,6 +7,8 @@ export const ENV = {
   secret: (process.env.SESSION_SECRET || "").trim(),
   anthropicKey: (process.env.ANTHROPIC_API_KEY || "").trim(),
   anthropicModel: (process.env.ANTHROPIC_MODEL || "claude-sonnet-5-5").trim(),
+  clickupToken: (process.env.CLICKUP_TOKEN || "").trim(),
+  clickupTeam: (process.env.CLICKUP_TEAM_ID || "").trim(),
 };
 
 // id interno <-> nombre en Airtable
@@ -16,6 +18,14 @@ export const STATUS = { pend: "Pendiente", curso: "En curso", hecha: "Hecha", bl
 export const statusId = name => Object.keys(STATUS).find(k => STATUS[k] === name) || "pend";
 export const PRIO = { alta: "Urgente", normal: "Normal", baja: "Baja" };
 export const prioId = name => Object.keys(PRIO).find(k => PRIO[k] === name) || "normal";
+
+// Correo de ClickUp -> trabajador de la web (se puede ampliar con la variable CLICKUP_EMAILS="correo=id,correo=id")
+export const CLICKUP_EMAILS = {
+  "amartinez@bateriasvolta.es": "angel",
+  "fpallares@bateriasvolta.es": "fesp",
+  "jencinas@bateriasvolta.es": "jaime",
+  ...Object.fromEntries((process.env.CLICKUP_EMAILS || "").split(",").map(x => x.trim().split("=")).filter(x => x.length === 2).map(([e, w]) => [e.trim().toLowerCase(), w.trim()])),
+};
 
 export const T = { tasks: "Tareas", tpl: "Repetitivas", meet: "Reuniones", files: "Archivos", cfg: "Config" };
 
