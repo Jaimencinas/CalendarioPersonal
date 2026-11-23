@@ -978,9 +978,11 @@ const cuIdFromUrl = u => { const m=String(u||"").match(/\/t\/(?:\d+\/)?([A-Za-z0
 let cuTimer=null, cuCtl=null, cuList=[];
 function setupClickUpUI(base){
   const isNew=!base.id;
-  $("#cuRow").classList.toggle("hidden", !(isNew && S.clickupEnabled && !base.clickupUrl));
+  $("#cuRow").classList.toggle("hidden", !(isNew && S.role==="admin" && !base.clickupUrl));
   $("#cuQ").value=""; $("#cuResults").classList.add("hidden"); $("#cuResults").innerHTML="";
-  $("#cuHint").textContent="Elige una tarea de ClickUp para rellenar esta tarea con sus datos.";
+  $("#cuQ").disabled = !S.clickupEnabled;
+  $("#cuHint").innerHTML = S.clickupEnabled ? "Elige una tarea de ClickUp para rellenar esta tarea con sus datos."
+    : '<span style="color:var(--bad)">ClickUp no está conectado: falta la variable <b>CLICKUP_TOKEN</b> en Netlify (con valor en Production) y volver a desplegar.</span>';
   renderCuLinked();
 }
 function renderCuLinked(){
