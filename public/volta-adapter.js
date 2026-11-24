@@ -236,6 +236,11 @@
     logout() { tok.clear(); state.aiEnabled = false; refresh(); },
     refresh,
     clickupEnabled: () => state.clickupEnabled,
+    async setStatus(id, status, note) {
+      const r = await call("api", { method: "POST", body: { action: "setStatus", id, status, ...(typeof note === "string" ? { note } : {}) } });
+      const i = state.tasks.findIndex(t => t.id === r.id); if (i >= 0) state.tasks[i] = r.task;
+      emit("tasks"); return r.task;
+    },
     clickupSearch: (q, signal, f) => call("clickup?q=" + encodeURIComponent(q || "") + "&f=" + encodeURIComponent(f || "todas"), { signal }).then(r => { const l = r.tasks || []; l.counts = r.counts || null; return l; }),
     clickupTask: id => call("clickup?id=" + encodeURIComponent(id)).then(r => r.task),
   };

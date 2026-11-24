@@ -205,6 +205,23 @@ main{display:grid;grid-template-columns:minmax(330px,420px) 1fr;gap:28px;padding
 .btn.ai.busy{opacity:.7;cursor:progress}
 .ai-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;background:#f4f1f9;border:1px solid #e1dbee;border-radius:6px;padding:8px 10px;font-size:13px;color:#3f3560}
 .ai-bar .btn{padding:4px 10px;font-size:13px}
+/* estado por el trabajador */
+.st-box{border:1px solid var(--line);border-radius:8px;padding:14px 16px;margin-bottom:22px;background:#fcfcfb}
+.st-seg{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 12px}
+.st-seg button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 16px;font-weight:600;cursor:pointer;font-size:14px}
+.st-seg button:hover{border-color:#bbb}
+.st-seg button.on.pend{background:var(--warn-soft);border-color:var(--warn);color:var(--warn)}
+.st-seg button.on.curso{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.st-seg button.on.hecha{background:var(--ok);border-color:var(--ok);color:#fff}
+.st-seg button.on.bloq{background:var(--bad);border-color:var(--bad);color:#fff}
+.st-seg button:disabled{opacity:.6;cursor:progress}
+.st-box textarea{width:100%;min-height:70px;border:1px solid #b9b9b4;border-radius:5px;padding:8px 10px;resize:vertical;line-height:1.45}
+.st-tools{display:flex;align-items:center;gap:10px;margin-top:8px;flex-wrap:wrap}
+.row-right{display:flex;align-items:center;gap:8px}
+.chk-btn{width:30px;height:30px;border-radius:50%;border:2px solid #c9c9c5;background:#fff;color:transparent;font-weight:700;cursor:pointer;display:grid;place-items:center;font-size:15px;flex:none}
+.chk-btn:hover{border-color:var(--ok);color:var(--ok)}
+.chk-btn.on{background:var(--ok);border-color:var(--ok);color:#fff}
+.chk-btn:disabled{opacity:.5;cursor:progress}
 /* ClickUp */
 .cu-box{background:#eef3fb;border:1px solid #d6e1f3;border-radius:6px;padding:12px}
 .cu-box label{color:#3c5f9e!important}
@@ -604,7 +621,7 @@ function renderList(){
         <div>${t.priority!=="normal"?`<div style="margin-bottom:3px">${prioBadge(t.priority)}</div>`:""}<div class="ti">${esc(t.title)}</div>
           <div class="su">${w?"":`<span class="dot" style="background:${wk.color}"></span>`}<span class="mono">${fmtH(t.hours)}</span> · ${short(t.from)} → ${short(t.to)}${t.templateId?` <span class="rep" title="Tarea repetitiva semanal">↻ Semanal</span>`:""}${t.clickupUrl?` <span class="cu-tag" title="Traída de ClickUp">ClickUp</span>`:""}${t.attachments.length?` · 📎 ${t.attachments.length}`:""}</div>
           <div class="due ${du.cls}">${du.txt}</div></div>
-        <span class="pill ${st[1]}">${st[0]}</span></div>`;
+        <span class="row-right"><span class="pill ${st[1]}">${st[0]}</span>${canSetStatus(t)?`<button class="chk-btn ${t.status==="hecha"?"on":""}" data-done="${esc(t.id)}" title="${t.status==="hecha"?"Volver a pendiente":"Marcar como hecha"}">✓</button>`:""}</span></div>`;
     }
   }
   $("#list").innerHTML=html;
@@ -685,6 +702,7 @@ const attUrl = a => a.url || ("/_blob/"+a.id);
 const attIcon = a => { const n=(a.name||"").split(".").pop().toUpperCase(); return n.length<=4?n:"FILE"; };
 function renderDetail(){
   const box=$("#detail"), t=findItem(S.sel);
+  const ae=document.activeElement; S._noteFocus = ae && ae.id==="wNote" ? [ae.selectionStart, ae.selectionEnd] : null;
   if(!t){ box.innerHTML=`<div class="detail-empty">Elige una tarea para ver su descripción, horas y adjuntos.</div>`; return; }
   const adm=S.role==="admin";
   if(t.meeting){ renderMeetingDetail(box,t,adm); return; }
@@ -714,6 +732,7 @@ function renderDetail(){
         <p>Día límite: ${esc(nice(t.to))}. Plazo transcurrido: ${Math.round(tp)} %. En las fechas filtradas: <span class="mono">${fmtH(inP)}</span>.</p>
         <div class="pbar"><i style="width:${tp}%;background:${du.cls==="late"?"var(--bad)":"var(--mute)"}"></i></div></div>
     </div>
+    ${statusBoxHtml(t)}
     <div class="sec-t">Descripción</div>
     <div class="desc">${t.description?esc(t.description):'<span style="color:var(--mute)">Sin descripción.</span>'}</div>
     <div class="sec-t">Adjuntos ${t.attachments.length?`<span class="mono" style="font-size:14px;color:var(--mute)">(${t.attachments.length})</span>`:""}</div>
@@ -723,6 +742,7 @@ function renderDetail(){
   </div>`;
   if(adm){ $("#dEdit").onclick=()=>openEditor(t); $("#dDup").onclick=()=>openEditor({...t,id:null,title:t.title+" (copia)",clickupUrl:null}); }
   if($("#dCuSync")) $("#dCuSync").onclick=()=>syncFromClickUp(t);
+  wireStatusBox(t);
 }
 
 /* ---- reunión: acta y acuerdos ---- */
@@ -804,7 +824,11 @@ $("#to").onchange=e=>{ if(!e.target.value) return; S.to=e.target.value; if(S.to<
 /* ================= INTERACTION ================= */
 $("#workerTabs").onclick=e=>{ const b=e.target.closest("button[data-w]"); if(!b || S.role==="worker") return; S.worker=b.dataset.w; const t=findItem(S.sel); if(t&&!t.meeting&&S.worker!=="all"&&t.worker!==S.worker) S.sel=null; renderAll(); };
 function select(id){ S.sel = S.sel===id?null:id; renderData(); if(S.sel && window.innerWidth<1050) $("#detail").scrollIntoView({behavior:"smooth"}); }
-$("#list").onclick=e=>{ const r=e.target.closest(".row"); if(r) select(r.dataset.id); };
+$("#list").onclick=e=>{
+  const d=e.target.closest("[data-done]");
+  if(d){ e.stopPropagation(); const t=S.tasks.find(x=>x.id===d.dataset.done); if(t){ d.disabled=true; setTaskStatus(t, t.status==="hecha"?"pend":"hecha"); } return; }
+  const r=e.target.closest(".row"); if(r) select(r.dataset.id);
+};
 $("#gantt").onclick=e=>{ if($("#gantt").classList.contains("editable")) return; const r=e.target.closest(".bar"); if(r) select(r.dataset.id); };
 
 /* ---- arrastrar barras del diagrama de plazos (solo administrador) ---- */
@@ -980,6 +1004,49 @@ ${text.slice(0,12000)}
     const h=$("#actaHint"); if(h) h.textContent="✨ Ordenada por Claude. Revísala y pulsa «Guardar acta»; luego crea las tareas desde cada acuerdo.";
   }catch(e){ const h=$("#actaHint"); if(h) h.textContent=aiErr(e); }
   finally{ aiCtl=null; const b=$("#actaAi"); if(b){ b.classList.remove("busy"); b.textContent="✨ Ordenar acta"; } }
+}
+
+/* ================= ESTADO DE LA TAREA (lo cambia el trabajador) ================= */
+S.noteDraft = {};
+const canSetStatus = t => !!t && !t.meeting && (S.role==="admin" || (S.role==="worker" && t.worker===S.me));
+function statusBoxHtml(t){
+  const can=canSetStatus(t);
+  const note = S.noteDraft[t.id]!==undefined ? S.noteDraft[t.id] : (t.workerNote||"");
+  const done = t.status==="hecha" && t.doneAt ? ` · terminada el ${esc(nice(t.doneAt))}` : "";
+  if(!can) return t.workerNote ? `<div class="sec-t">Comentario del trabajador</div><div class="desc">${esc(t.workerNote)}</div>` : "";
+  return `<div class="st-box">
+    <div class="sec-t" style="margin:0">Estado de la tarea<span class="hint" style="font-family:'IBM Plex Sans';font-size:13px;font-weight:400">${done}</span></div>
+    <div class="st-seg" id="stSeg">${Object.keys(STATUS).map(k=>`<button type="button" data-st="${k}" class="${k} ${t.status===k?"on":""}">${k==="hecha"?"✓ ":""}${STATUS[k][0]}</button>`).join("")}</div>
+    <textarea id="wNote" placeholder="Comentario (opcional): qué has hecho, qué falta o qué problema hay…">${esc(note)}</textarea>
+    <div class="st-tools">
+      <button type="button" class="btn mic" id="wNoteMic" data-target="wNote" data-hint="wNoteMsg">● Dictar</button>
+      <button type="button" class="btn" id="wNoteSave" ${S.noteDraft[t.id]!==undefined && S.noteDraft[t.id]!==(t.workerNote||"") ? "" : "disabled"}>Guardar comentario</button>
+      <span class="hint" id="wNoteMsg">${S.role==="worker"?"Jaime verá tu comentario en la tarea.":""}</span>
+    </div>
+  </div>`;
+}
+function wireStatusBox(t){
+  if(!canSetStatus(t) || !$("#stSeg")) return;
+  const ta=$("#wNote");
+  if(S._noteFocus){ ta.focus(); try{ ta.setSelectionRange(S._noteFocus[0],S._noteFocus[1]); }catch(_){} }
+  ta.oninput=()=>{ S.noteDraft[t.id]=ta.value; $("#wNoteSave").disabled = ta.value===(t.workerNote||""); };
+  $("#wNoteMic").onclick=micClick;
+  if(S.dict && S.dict.active() && S.dictTargetId==="wNote") S.dictBtn=$("#wNoteMic");
+  updMic(S.dict&&S.dict.active()?"listening":"idle");
+  $("#stSeg").onclick=e=>{ const b=e.target.closest("[data-st]"); if(!b || b.classList.contains("on")) return;
+    if(b.dataset.st==="bloq" && !ta.value.trim()){ $("#wNoteMsg").innerHTML='<span style="color:var(--bad)">Cuenta en el comentario qué problema hay.</span>'; ta.focus(); }
+    setTaskStatus(t, b.dataset.st, ta.value); };
+  $("#wNoteSave").onclick=()=>setTaskStatus(t, t.status, ta.value, true);
+}
+async function setTaskStatus(t, st, note, onlyNote){
+  document.querySelectorAll("#stSeg button,#wNoteSave").forEach(b=>b.disabled=true);
+  if(S.dict && S.dict.active() && S.dictTargetId==="wNote") await stopDict();
+  try{
+    await VoltaAPI.setStatus(t.id, st, typeof note==="string" ? note.trim() : undefined);
+    delete S.noteDraft[t.id];
+    toast(onlyNote ? "Comentario guardado" : st==="hecha" ? "✓ Tarea marcada como hecha" : `Estado: ${STATUS[st][0]}`);
+  }catch(e){ toast(e.message || "No se pudo guardar"); }
+  renderData();
 }
 
 /* ================= CLICKUP: traer tareas ================= */
@@ -1213,6 +1280,7 @@ $("#saveBtn").onclick=async ()=>{
     createdAt:S.edit.createdAt||now, updatedAt:now };
   if(S.edit.meetingDate) body.meetingDate=S.edit.meetingDate;
   body.clickupUrl = S.edit.clickupUrl || null;
+  body.doneAt = S.edit.doneAt || null;
   let tplRef=null;
   if($("#eTplSave").checked){
     const exists = S.edit.templateId && S.templates.find(t=>t.id===S.edit.templateId);
@@ -1486,7 +1554,7 @@ window.addEventListener("volta-error",e=>{ $("#banner").textContent="No se pudie
     S.tasks = snap.docs.filter(d=>d.exists).map(d=>{ const x=d.data()||{};
       const from=String(x.dateFrom||x.date||todayS()), to=String(x.dateTo||x.date||from);
       return {id:d.id, title:String(x.title||"Sin título"), worker:String(x.worker||""), status:String(x.status||"pend"),
-        priority: PRIO[x.priority] ? x.priority : "normal", meetingDate: x.meetingDate?String(x.meetingDate):null, templateId: x.templateId?String(x.templateId):null, clickupUrl: x.clickupUrl?String(x.clickupUrl):null,
+        priority: PRIO[x.priority] ? x.priority : "normal", meetingDate: x.meetingDate?String(x.meetingDate):null, templateId: x.templateId?String(x.templateId):null, clickupUrl: x.clickupUrl?String(x.clickupUrl):null, workerNote: String(x.workerNote||""), doneAt: x.doneAt?String(x.doneAt):null,
         from, to: to<from?from:to, hours:Number(x.hours)||0, description:String(x.description||""),
         attachments:Array.isArray(x.attachments)?x.attachments:[], createdAt:x.createdAt||null}; });
     if(!snap.metadata.fromCache){ clearTimeout(timer); $("#banner").classList.add("hidden"); }

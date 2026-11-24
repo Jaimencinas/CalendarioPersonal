@@ -7,7 +7,7 @@ Web de tareas del equipo de Volta Baterías (Ángel, Fernando, Fernando Molleja 
 
 ## Qué hace
 
-- **Entrada con código de 6 dígitos.** Cada trabajador solo ve sus tareas. El administrador ve a todo el equipo, crea, edita y arrastra tareas, y cambia los ajustes.
+- **Entrada con código de 6 dígitos.** Cada trabajador solo ve sus tareas y puede marcarlas como Pendiente, En curso, Hecha o Incidencia, con un comentario (también por dictado). No puede crear, editar ni borrar tareas. El administrador ve a todo el equipo, crea, edita y arrastra tareas, y cambia los ajustes.
 - **Carga de trabajo sobre 40 h semanales**, con un diagrama de plazos que se puede arrastrar.
 - **Datos de cada tarea:** prioridad, estado, adjuntos, descripción dictada por voz y tareas repetitivas semanales.
 - **Reunión semanal:** acta con acuerdos que se convierten en tareas. Se ve en la hora de Venezuela para Fernando Molleja.
@@ -87,7 +87,7 @@ Son los mismos que en la versión de Claude. Se cambian desde la web: **Ajustes 
 
 ## Tablas de Airtable
 
-- **Tareas:** Título, Trabajador, Estado, Prioridad, Desde, Hasta, Horas, Descripción, Adjuntos, Reunión, Repetitiva.
+- **Tareas:** Título, Trabajador, Estado, Prioridad, Desde, Hasta, Horas, Descripción, Adjuntos, Reunión, Repetitiva, ClickUp, Comentario trabajador, Hecha el.
 - **Repetitivas:** tareas semanales que se eligen al crear una tarea.
 - **Reuniones:** una fila por fecha con el acta.
 - **Archivos:** almacén temporal de lo que se sube desde la web. Se puede vaciar de vez en cuando.

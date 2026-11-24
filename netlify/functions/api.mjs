@@ -13,6 +13,7 @@ function taskOut(r) {
     dateFrom: f.Desde || null, dateTo: f.Hasta || f.Desde || null, hours: Number(f.Horas) || 0, description: f["Descripción"] || "",
     attachments: (f.Adjuntos || []).map(att), meetingDate: f["Reunión"] || null, templateId: f.Repetitiva || null,
     clickupUrl: f.ClickUp || null,
+    workerNote: f["Comentario trabajador"] || "", doneAt: f["Hecha el"] || null,
   };
 }
 function tplOut(r) {
@@ -30,6 +31,7 @@ async function attachmentsFor(table, id, list) {
   return (Array.isArray(list) ? list : []).map(a => keep.has(a.id) ? { id: a.id } : (a.url ? { url: a.url, filename: a.name || "archivo" } : null)).filter(Boolean);
 }
 const date = v => (typeof v === "string" && /^\d{4}-\d{2}-\d{2}$/.test(v)) ? v : null;
+const todayES = () => new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Madrid", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
 
 export default handler(async (req) => {
   if (req.method === "GET") {
@@ -52,8 +54,21 @@ export default handler(async (req) => {
     });
   }
   if (req.method !== "POST") throw new HttpError(405, "Método no permitido");
-  requireAuth(req, true);
   const b = await req.json().catch(() => ({}));
+
+  // El trabajador puede cambiar el estado (y dejar un comentario) SOLO en sus propias tareas.
+  if (b.action === "setStatus") {
+    const s = requireAuth(req);
+    if (!STATUS[b.status]) throw new HttpError(400, "Estado no válido");
+    const cur = await getRecord(T.tasks, String(b.id || ""));
+    if (s.role !== "admin" && workerId(cur.fields?.Trabajador) !== s.who) throw new HttpError(403, "Solo puedes cambiar tus propias tareas.");
+    const fields = { Estado: STATUS[b.status], "Hecha el": b.status === "hecha" ? (cur.fields?.["Hecha el"] || todayES()) : null };
+    if (typeof b.note === "string") fields["Comentario trabajador"] = b.note.slice(0, 2000);
+    const r = await updateRecord(T.tasks, cur.id, fields);
+    return json({ id: r.id, task: taskOut(r) });
+  }
+
+  requireAuth(req, true);
   switch (b.action) {
     case "saveTask": {
       const t = b.task || {};
@@ -62,6 +77,7 @@ export default handler(async (req) => {
         "Título": String(t.title || "").slice(0, 200), Trabajador: WORKERS[t.worker], Estado: STATUS[t.status] || STATUS.pend, Prioridad: PRIO[t.priority] || PRIO.normal,
         Desde: date(t.dateFrom), Hasta: date(t.dateTo), Horas: Math.max(0, Number(t.hours) || 0), "Descripción": String(t.description || ""),
         "Reunión": date(t.meetingDate), Repetitiva: t.templateId ? String(t.templateId) : "",
+        "Hecha el": t.status === "hecha" ? (date(t.doneAt) || todayES()) : null,
         ClickUp: /^https:\/\/(app\.)?clickup\.com\//.test(String(t.clickupUrl || "")) ? String(t.clickupUrl) : null,
         Adjuntos: await attachmentsFor(T.tasks, b.id, t.attachments),
       };
